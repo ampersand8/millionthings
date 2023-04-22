@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MillionThings
 {
-    internal class Tui
+    public class Tui
     {
         private Todo todo;
         private List<TodoItem> todos;
