@@ -12,14 +12,12 @@ namespace MillionThings
         private readonly string[] commands;
         private readonly string description;
         private readonly CommandAction action;
-        private readonly bool exits;
 
-        public Command(string description, CommandAction action, bool exits, params string[] commands)
+        public Command(string description, CommandAction action, params string[] commands)
         {
             this.commands = commands;
             this.description = description;
             this.action = action;
-            this.exits = exits;
         }
 
         public bool IsCommand(string command)
@@ -35,11 +33,6 @@ namespace MillionThings
         public string[] GetCommands()
         {
             return commands;
-        }
-
-        public bool Exits()
-        {
-            return exits;
         }
 
         public void Run()

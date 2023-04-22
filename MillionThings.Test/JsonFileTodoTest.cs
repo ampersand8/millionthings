@@ -24,6 +24,13 @@ namespace MillionThings.Test
         }
 
         [Fact]
+        public void ShouldListEmptyTodoList()
+        {
+            Todo sut = CreateRandomTodo();
+            Assert.Empty(sut.List());
+        }
+
+        [Fact]
         public void ShouldListTodoFromGivenJsonFile()
         {
             Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "onetodo.json"));

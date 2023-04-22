@@ -9,46 +9,61 @@ namespace MillionThings
     public class Tui
     {
         private Todo todo;
-        private List<TodoItem> todos;
+        private List<TodoItem> todos = new List<TodoItem>();
         private Dictionary<string, Command> commands = new Dictionary<string, Command>();
+        private TextReader input;
+        private TextWriter output;
 
-        public Tui()
+        public Tui(TextReader input, TextWriter output) : this(input, output, AskForFilePath(input, output))
         {
-            Console.Write("Please enter path to todo json file: ");
-            string todoPath = Console.ReadLine();
+        }
+
+
+
+        public Tui(TextReader input, TextWriter output, string todoPath)
+        {
+            this.input = input;
+            this.output = output;
+
             todo = new JsonFileTodo(todoPath);
 
-            commands.Add("add", new Command("Add new todo", AddQuestion, false, "add", "a"));
-            commands.Add("done", new Command("Mark a todo as done", DoneQuestion, false, "done", "d"));
-            commands.Add("exit", new Command("Exit from todo app", () => { }, true, "exit", "e", "q"));
+            commands.Add("add", new Command("Add new todo", AddQuestion, "add", "a"));
+            commands.Add("done", new Command("Mark a todo as done", DoneQuestion, "done", "d"));
+            commands.Add("exit", new Command("Exit from todo app", () => { }, "quit", "exit", "e", "q"));
         }
 
         public void Run()
         {
-
-            string stringInput;
+            string parsedInput = "";
             do
             {
                 PrintTodos();
                 PrintCommandQuery();
-                stringInput = Console.ReadLine();
-                string parsedInput = ParseStringCommand(stringInput);
+
+                string stringInput = input.ReadLine();
+                parsedInput = ParseStringCommand(stringInput);
                 if (commands.ContainsKey(parsedInput))
                 {
                     Command currentCommand = commands[parsedInput];
                     currentCommand.Run();
-                    if (currentCommand.Exits()) Environment.Exit(0);
                 } else
                 {
                     PrintUnknownCommand(stringInput);
                     continue;
                 }
-            } while (stringInput != "exit" );
+            } while (parsedInput != "exit" );
         }
 
-        private string ParseStringCommand( string command )
+        private static string AskForFilePath(TextReader input, TextWriter output)
         {
-            if (commands.ContainsKey( command ))
+            output.Write("Please enter path to todo json file: ");
+            return input.ReadLine();
+        }
+
+        private string ParseStringCommand(string command)
+        {
+            if (command == null) return "unknown";
+            if (commands.ContainsKey(command))
             {
                 return command;
             }
@@ -64,43 +79,43 @@ namespace MillionThings
 
         private void AddQuestion()
         {
-            Console.Write("description: ");
-            string description = Console.ReadLine();
+            output.Write("description: ");
+            string description = input.ReadLine();
             todo.Add(description);
-            Console.WriteLine("Added");
+            output.WriteLine("Added");
         }
 
         private void DoneQuestion()
         {
-            Console.Write("id: ");
-            string id = Console.ReadLine();
+            output.Write("id: ");
+            string id = input.ReadLine();
             todo.Done(todos[Int32.Parse(id)].Id);
-            Console.WriteLine("Done");
+            output.WriteLine("Done");
         }
 
         private void PrintCommandQuery()
         {
-            Console.WriteLine("\nPlease enter command:");
+            output.WriteLine("\nPlease enter command:");
             foreach (var command  in commands)
             {
-                Console.WriteLine($"{command.Value.GetCommands()[0],8}: {command.Value.GetDescription()}");
+                output.WriteLine($"{command.Value.GetCommands()[0],8}: {command.Value.GetDescription()}");
             }
-            Console.Write("#> ");
+            output.Write("#> ");
         }
 
         private void PrintTodos()
         {
-            Console.WriteLine("\nTodos:");
+            output.WriteLine("\nTodos:");
             todos = todo.List();
             for (int index = 0; index < todos.Count; index++)
             {
-                Console.WriteLine($"{index + 1, 5}): {todos[index].Description}");
+                output.WriteLine($"{index + 1, 5}): {todos[index].Description}");
             }
         }
 
         private void PrintUnknownCommand(string command)
         {
-            Console.WriteLine($"Unknown command: {command}\n");
+            output.WriteLine($"Unknown command: {command}\n");
         }
     }
 }
