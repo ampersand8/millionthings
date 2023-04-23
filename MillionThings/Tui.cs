@@ -29,7 +29,8 @@ namespace MillionThings
 
             commands.Add("add", new Command("Add new todo", AddQuestion, "add", "a"));
             commands.Add("done", new Command("Mark a todo as done", DoneQuestion, "done", "d"));
-            commands.Add("exit", new Command("Exit from todo app", () => { }, "quit", "exit", "e", "q"));
+            commands.Add("edit", new Command("Edit a todo", UpdateTodo, "edit", "e"));
+            commands.Add("quit", new Command("Quit from todo app", () => { }, "quit", "exit", "q"));
         }
 
         public void Run()
@@ -46,12 +47,13 @@ namespace MillionThings
                 {
                     Command currentCommand = commands[parsedInput];
                     currentCommand.Run();
-                } else
+                }
+                else
                 {
                     PrintUnknownCommand(stringInput);
                     continue;
                 }
-            } while (parsedInput != "exit" );
+            } while (parsedInput != "quit");
         }
 
         private static string AskForFilePath(TextReader input, TextWriter output)
@@ -77,6 +79,17 @@ namespace MillionThings
             return "unknown";
         }
 
+        private void UpdateTodo()
+        {
+            output.Write("id: ");
+            string id = input.ReadLine();
+            output.Write("description: ");
+            string description = input.ReadLine();
+
+            todo.Update(new TodoItem(todos[Int32.Parse(id) - 1].Id, description));
+            output.WriteLine("Updated");
+        }
+
         private void AddQuestion()
         {
             output.Write("description: ");
@@ -89,14 +102,14 @@ namespace MillionThings
         {
             output.Write("id: ");
             string id = input.ReadLine();
-            todo.Done(todos[Int32.Parse(id)].Id);
+            todo.Done(todos[Int32.Parse(id) - 1].Id);
             output.WriteLine("Done");
         }
 
         private void PrintCommandQuery()
         {
             output.WriteLine("\nPlease enter command:");
-            foreach (var command  in commands)
+            foreach (var command in commands)
             {
                 output.WriteLine($"{command.Value.GetCommands()[0],8}: {command.Value.GetDescription()}");
             }
@@ -109,7 +122,7 @@ namespace MillionThings
             todos = todo.List();
             for (int index = 0; index < todos.Count; index++)
             {
-                output.WriteLine($"{index + 1, 5}): {todos[index].Description}");
+                output.WriteLine($"{index + 1,5}): {todos[index].Description}");
             }
         }
 

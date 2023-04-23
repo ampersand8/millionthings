@@ -8,9 +8,14 @@ namespace MillionThings
 {
     public class TodoItem
     {
-        public TodoItem()
+        public TodoItem() : this(Guid.NewGuid().ToString(), "")
         {
-            Id = Guid.NewGuid().ToString();
+        }
+
+        public TodoItem(string id, string description)
+        {
+            Id = id;
+            Description = description;
         }
 
         public string Id { get; set; }
