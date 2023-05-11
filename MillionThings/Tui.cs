@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MillionThings
+﻿namespace MillionThings
 {
     public class Tui
     {
@@ -81,12 +75,20 @@ namespace MillionThings
 
         private void UpdateTodo()
         {
+            if (todos.Count == 0)
+            {
+                output.Write("No todos to edit");
+                return;
+            }
             output.Write("id: ");
-            string id = input.ReadLine();
+            string inputId = input.ReadLine();
+            int? id = Int32.TryParse(inputId, out int parsedId) ? parsedId : null;
             output.Write("description: ");
             string description = input.ReadLine();
-
-            todo.Update(new TodoItem(todos[Int32.Parse(id) - 1].Id, description));
+            if (id is not null && id <= todos.Count)
+            {
+                todo.Update(new TodoItem(todos[id.Value - 1].Id, description));
+            }
             output.WriteLine("Updated");
         }
 
@@ -100,9 +102,18 @@ namespace MillionThings
 
         private void DoneQuestion()
         {
+            if (todos.Count == 0)
+            {
+                output.Write("No todos to finish");
+                return;
+            }
             output.Write("id: ");
-            string id = input.ReadLine();
-            todo.Done(todos[Int32.Parse(id) - 1].Id);
+            string inputId = input.ReadLine();
+            int? id = Int32.TryParse(inputId, out int parsedId) ? parsedId : null;
+            if (id is not null && id <= todos.Count)
+            {
+                todo.Done(todos[id.Value - 1].Id);
+            }
             output.WriteLine("Done");
         }
 

@@ -65,14 +65,26 @@ namespace MillionThings.Test
             Assert.DoesNotContain(sut.List(), item => item.Description == "This is my one and only todo");
         }
 
-        [Fact]
-        public void ShouldNotFailWhenSettingANonExistentTodoToDone()
+        [Theory]
+        [InlineData("SOME_WRONG_ID")]
+        [InlineData("")]
+        public void ShouldNotFailWhenSettingANonExistentTodoToDone(string inputId)
         {
             Todo sut = CreateRandomTodo();
             sut.Add("This is my one and only todo");
             Assert.Contains(sut.List(), item => item.Description == "This is my one and only todo");
-            sut.Done("SOME_WRONG_ID");
+            sut.Done(inputId);
             Assert.Contains(sut.List(), item => item.Description == "This is my one and only todo");
+        }
+
+        [Theory]
+        [InlineData("SOME_WRONG_ID")]
+        [InlineData("")]
+        public void ShouldNotFailWhenSettingANonExistentTodoToDoneWhenNoTodosExist(string inputId)
+        {
+            Todo sut = CreateRandomTodo();
+            sut.Done(inputId);
+            Assert.Empty(sut.List());
         }
 
         [Fact]
