@@ -1,0 +1,5 @@
+﻿@WebAPI_HostAddress = http://localhost:5016
+
+GET {{WebAPI_HostAddress}}/api/todos/string
+
+###

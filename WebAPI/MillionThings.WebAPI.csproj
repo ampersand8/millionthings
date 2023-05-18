@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MillionThings\MillionThings.csproj" />
+    <ProjectReference Include="..\MillionThings\MillionThings.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,78 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
-namespace MillionThings
+namespace MillionThings;
+
+public class JsonFileTodo : Todo
 {
-    public class JsonFileTodo : Todo
+    public List<TodoItem> todos;
+    private string path;
+
+    public JsonFileTodo(string path)
     {
-        public List<TodoItem> todos;
-        private string path;
+        this.path = path;
+        CreateFileIfNotExists(path);
+        todos = LoadJsonFile(path);
+    }
 
-        public JsonFileTodo(string path)
+
+    public List<TodoItem> List() { return todos; }
+
+    public void Add(string description)
+    {
+        if (!todos.Any(todo => todo.Description == description))
         {
-            this.path = path;
-            CreateFileIfNotExists(path);
-            todos = LoadJsonFile(path);
-        }
-
-
-        public List<TodoItem> List() { return todos; }
-
-        public void Add(string description)
-        {
-            if (!todos.Any(todo => todo.Description == description))
-            {
-                todos.Add(new() { Description = description });
-                PersistToFile();
-            }
-        }
-
-        public void Done(string id)
-        {
-            todos.RemoveAll(todo => todo.Id == id);
+            todos.Add(new() { Description = description });
             PersistToFile();
         }
-        private static List<TodoItem> LoadJsonFile(string path)
-        {
-            using (StreamReader r = new StreamReader(path))
-            {
-                string json = r.ReadToEnd();
-                return JsonSerializer.Deserialize<List<TodoItem>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            }
-        }
+    }
 
-        public void Update(TodoItem item)
+    public void Done(string id)
+    {
+        TodoItem todo = todos.Find(todo => todo.Id == id);
+        if (todo != null)
         {
-            var index = todos.FindIndex(todo => todo.Id == item.Id);
-            if (index > -1)
-            {
-                todos[index] = item;
-            } else
-            {
-                Add(item.Description);
-            }
+            Update(todo.Finish());
             PersistToFile();
         }
-
-        private static void CreateFileIfNotExists(string path)
+    }
+    private static List<TodoItem> LoadJsonFile(string path)
+    {
+        using (StreamReader r = new StreamReader(path))
         {
-            if (File.Exists(path))
-            {
-                return;
-            }
-            File.WriteAllText(path, "[]");
+            string json = r.ReadToEnd();
+            return JsonSerializer.Deserialize<List<TodoItem>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
+    }
 
-        private void PersistToFile()
+    public void Update(TodoItem item)
+    {
+        var index = todos.FindIndex(todo => todo.Id == item.Id);
+        if (index > -1)
         {
-            using (StreamWriter sw = new StreamWriter(path))
-            {
-                sw.Write(JsonSerializer.Serialize(todos));
-            }
+            todos[index] = item;
+        }
+        else
+        {
+            Add(item.Description);
+        }
+        PersistToFile();
+    }
+
+    private static void CreateFileIfNotExists(string path)
+    {
+        if (File.Exists(path))
+        {
+            return;
+        }
+        File.WriteAllText(path, "[]");
+    }
+
+    private void PersistToFile()
+    {
+        using (StreamWriter sw = new StreamWriter(path))
+        {
+            sw.Write(JsonSerializer.Serialize(todos));
         }
     }
 }

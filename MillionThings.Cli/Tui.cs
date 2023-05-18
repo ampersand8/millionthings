@@ -130,7 +130,7 @@
         private void PrintTodos()
         {
             output.WriteLine("\nTodos:");
-            todos = todo.List();
+            todos = todo.List().FindAll(todo => todo.Status == TodoStatus.Open);
             for (int index = 0; index < todos.Count; index++)
             {
                 output.WriteLine($"{index + 1,5}): {todos[index].Description}");

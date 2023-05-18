@@ -1,6 +1,7 @@
 [
   {
     "id": "1",
-    "description": "This is the first todo"
+    "description": "This is the first todo",
+    "status":  "open"
   }
 ]

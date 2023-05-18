@@ -1,40 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace MillionThings
+namespace MillionThings;
+
+public enum TodoStatus
 {
-    public class TodoItem
+    Open,
+    Done
+}
+
+public class TodoItem
+{
+    public TodoItem() : this(Guid.NewGuid().ToString(), "", TodoStatus.Open)
     {
-        public TodoItem() : this(Guid.NewGuid().ToString(), "")
+    }
+
+    public TodoItem(string id, string description, TodoStatus status = TodoStatus.Open)
+    {
+        Id = id;
+        Description = description;
+        Status = status;
+    }
+
+    public string Id { get; set; }
+
+    public string Description { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public TodoStatus Status { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null) return false;
+        if (obj is TodoItem item)
         {
+            return item.Description == Description && item.Id == Id;
         }
+        return false;
+    }
 
-        public TodoItem(string id, string description)
-        {
-            Id = id;
-            Description = description;
-        }
+    public override int GetHashCode()
+    {
+        return Description.GetHashCode();
+    }
 
-        public string Id { get; set; }
-
-        public string Description { get; set; }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj == null) return false;
-            if (obj is  TodoItem item)
-            {
-                return item.Description == Description && item.Id == Id;
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Description.GetHashCode();
-        }
+    public TodoItem Finish()
+    {
+        return new(Id, Description, TodoStatus.Done);
     }
 }
