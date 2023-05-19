@@ -28,10 +28,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="onetodo.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<None Update="resources\onetodo.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="twotodos.json" CopyToOutputDirectory="PreserveNewest" />
+		<None Update="resources\twotodos.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

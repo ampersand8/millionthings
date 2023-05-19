@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 
-namespace MillionThings;
+namespace MillionThings.Core;
 
 public class JsonFileTodo : Todo
 {
-    public List<TodoItem> todos;
-    private string path;
+    private readonly List<TodoItem> todos;
+    private readonly string path;
 
     public JsonFileTodo(string path)
     {
@@ -15,33 +15,32 @@ public class JsonFileTodo : Todo
     }
 
 
-    public List<TodoItem> List() { return todos; }
+    public List<TodoItem> List()
+    {
+        return todos;
+    }
 
     public void Add(string description)
     {
-        if (!todos.Any(todo => todo.Description == description))
-        {
-            todos.Add(new() { Description = description });
-            PersistToFile();
-        }
+        if (todos.Any(todo => todo.Description == description)) return;
+        todos.Add(new() { Description = description });
+        PersistToFile();
     }
 
     public void Done(string id)
     {
-        TodoItem todo = todos.Find(todo => todo.Id == id);
-        if (todo != null)
-        {
-            Update(todo.Finish());
-            PersistToFile();
-        }
+        TodoItem? todo = todos.Find(todo => todo.Id == id);
+        if (todo == null) return;
+        Update(todo.Finish());
+        PersistToFile();
     }
+
     private static List<TodoItem> LoadJsonFile(string path)
     {
-        using (StreamReader r = new StreamReader(path))
-        {
-            string json = r.ReadToEnd();
-            return JsonSerializer.Deserialize<List<TodoItem>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        }
+        using var r = new StreamReader(path);
+        string json = r.ReadToEnd();
+        return JsonSerializer.Deserialize<List<TodoItem>>(json,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
     public void Update(TodoItem item)
@@ -55,6 +54,7 @@ public class JsonFileTodo : Todo
         {
             Add(item.Description);
         }
+
         PersistToFile();
     }
 
@@ -64,6 +64,7 @@ public class JsonFileTodo : Todo
         {
             return;
         }
+
         File.WriteAllText(path, "[]");
     }
 

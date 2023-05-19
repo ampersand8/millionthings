@@ -1,11 +1,13 @@
-﻿namespace MillionThings.Test;
+﻿using MillionThings.Core;
+
+namespace MillionThings.Test;
 
 public class JsonFileTodoTest
 {
     [Fact]
     public void ShouldInstantiateWithExistingJsonFile()
     {
-        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "onetodo.json"));
+        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/onetodo.json"));
     }
 
     [Fact]
@@ -25,7 +27,7 @@ public class JsonFileTodoTest
     [Fact]
     public void ShouldListTodoFromGivenJsonFile()
     {
-        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "onetodo.json"));
+        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/onetodo.json"));
         List<TodoItem> expected = new() { new() { Id = "1", Description = "This is the first todo" } };
         Assert.Equal(expected, sut.List());
     }
@@ -33,7 +35,7 @@ public class JsonFileTodoTest
     [Fact]
     public void ShouldListTodosFromGivenJsonFile()
     {
-        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "twotodos.json"));
+        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/twotodos.json"));
         List<TodoItem> expected = new() { new() { Id = "1", Description = "This is the first todo" }, new() { Id = "2", Description = "This is the second todo" } };
         Assert.Equal(expected, sut.List());
     }
