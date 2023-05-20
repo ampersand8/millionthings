@@ -22,9 +22,22 @@ body {
 }
 
 ul.todos-open li {
+  display: flex;
   text-align: left;
   margin-bottom: 1em;
   padding: .2em;
   background-color: hsl(187, 100%, 98%);
   border-radius: .5em;
+}
+
+ul.todos-open li:hover {
+    background-color: hsl(187, 100%, 96%);
+}
+
+ul.todos-open li input[type=checkbox] {
+  margin-right: .5em;
+}
+
+ul.todos-open li input[type=checkbox]:hover {
+  cursor: pointer;
 }

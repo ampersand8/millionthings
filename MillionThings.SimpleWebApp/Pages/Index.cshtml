@@ -5,15 +5,17 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <form method="post">
+    <h1 class="display-4">MillionThings</h1>
+    <form method="post" class="needs-validation" novalidate>
         <div>
-            <div class="form-floating mb-3">
-                <input name="description" id="description" type="text" class="form-control" placeholder="Wash the dishes"/>
+            <div class="form-floating mb-2">
+                <input name="description" id="description" type="text" class="form-control" placeholder="Wash the dishes" required/>
                 <label for="description">Todo</label>
+                <div class="invalid-tooltip">
+                    Please describe your task to add.
+                </div>
             </div>
-            <input type="submit" name="submit" value="Add"/>
+            <input type="submit" name="submit" value="Add Task" class="btn btn-outline-primary mb-3"/>
         </div>
     </form>
     <div>
@@ -21,7 +23,7 @@
             @foreach (var todo in Model.Todos)
             {
                 <li>
-                    <a href="?action=finish&id=@(todo.Id)" class="btn btn-primary btn-sm">Done</a>
+                    <input type="checkbox" onchange="window.location.href = '?action=finish&id=@(todo.Id)'" class="form-check-input" aria-label="done"/>
                     @todo.Description
                 </li>
             }
