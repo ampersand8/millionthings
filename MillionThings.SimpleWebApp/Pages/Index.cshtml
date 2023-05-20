@@ -1,0 +1,31 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = null;
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <form method="post">
+        <div>
+            <div class="form-floating mb-3">
+                <input name="description" id="description" type="text" class="form-control" placeholder="Wash the dishes"/>
+                <label for="description">Todo</label>
+            </div>
+            <input type="submit" name="submit" value="Add"/>
+        </div>
+    </form>
+    <div>
+        <ul class="todos-open list-unstyled">
+            @foreach (var todo in Model.Todos)
+            {
+                <li>
+                    <a href="?action=finish&id=@(todo.Id)" class="btn btn-primary btn-sm">Done</a>
+                    @todo.Description
+                </li>
+            }
+        </ul>
+    </div>
+
+</div>

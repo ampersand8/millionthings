@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MillionThings.WebAPI", "Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.Cli", "MillionThings.Cli\MillionThings.Cli.csproj", "{7514D4F0-A6C9-4512-B912-5ACBC54997DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.SimpleWebApp", "MillionThings.SimpleWebApp\MillionThings.SimpleWebApp.csproj", "{A96CF0AE-BB11-4111-BE22-CC8FA98DC947}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7514D4F0-A6C9-4512-B912-5ACBC54997DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7514D4F0-A6C9-4512-B912-5ACBC54997DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7514D4F0-A6C9-4512-B912-5ACBC54997DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A96CF0AE-BB11-4111-BE22-CC8FA98DC947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A96CF0AE-BB11-4111-BE22-CC8FA98DC947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A96CF0AE-BB11-4111-BE22-CC8FA98DC947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A96CF0AE-BB11-4111-BE22-CC8FA98DC947}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
