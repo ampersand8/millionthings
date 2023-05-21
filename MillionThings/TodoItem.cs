@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MillionThings;
+namespace MillionThings.Core;
 
 public enum TodoStatus
 {
@@ -21,16 +21,15 @@ public class TodoItem
         Status = status;
     }
 
-    public string Id { get; set; }
+    public string Id { get; init; }
 
-    public string Description { get; set; }
+    public string Description { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public TodoStatus Status { get; set; }
+    public TodoStatus Status { get; init; }
 
     public override bool Equals(object? obj)
     {
-        if (obj == null) return false;
         if (obj is TodoItem item)
         {
             return item.Description == Description && item.Id == Id;

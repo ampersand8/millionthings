@@ -153,6 +153,18 @@ public class JsonFileTodoTest
         Assert.Single(sut.List());
         Assert.Contains(sut.List(), item => item.Description == "Testing One");
     }
+    
+    [Fact]
+    public void ShouldRemoveTodoWhenDeleteIsCalled()
+    {
+        Todo sut = CreateRandomTodo();
+
+        sut.Add("Testing One");
+        TodoItem savedTodo = sut.List().First();
+
+        sut.Delete(savedTodo.Id);
+        Assert.Empty(sut.List());
+    }
 
     private static Todo CreateRandomTodo()
     {

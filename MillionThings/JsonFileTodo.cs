@@ -58,6 +58,12 @@ public class JsonFileTodo : Todo
         PersistToFile();
     }
 
+    public void Delete(string id)
+    {
+        todos.RemoveAll(todo => todo.Id == id);
+        PersistToFile();
+    }
+
     private static void CreateFileIfNotExists(string path)
     {
         if (File.Exists(path))

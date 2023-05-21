@@ -31,6 +31,9 @@ public class IndexModel : PageModel
             case "reopen":
                 Reopen(id);
                 break;
+            case "delete":
+                Delete(id);
+                break;
             default:
                 logger.LogInformation("Unknown action {}", action);
                 break;
@@ -61,5 +64,12 @@ public class IndexModel : PageModel
         if (task == null) return;
         logger.LogInformation("Reopening todo {}", id);
         todo.Update(new TodoItem { Id = task.Id, Description = task.Description, Status = TodoStatus.Open });
+    }
+
+    private void Delete(string? id)
+    {
+        if (id == null) return;
+        logger.LogInformation("Deleting todo {}", id);
+        todo.Delete(id);
     }
 }

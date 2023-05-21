@@ -24,7 +24,8 @@
             {
                 <li>
                     <input type="checkbox" onchange="window.location.href = '?action=finish&id=@(todo.Id)'" class="form-check-input" aria-label="done"/>
-                    @todo.Description
+                    <span style="flex-grow: 1">@todo.Description</span>
+                    <span class="material-symbols-rounded delete" onclick="window.location.href = '?action=delete&id=@todo.Id'">delete</span>
                 </li>
             }
         </ul>
@@ -43,7 +44,8 @@
             {
                 <li>
                     <input type="checkbox" onchange="window.location.href = '?action=reopen&id=@(todo.Id)'" class="form-check-input" aria-label="done" checked/>
-                    @todo.Description
+                    <span style="flex-grow: 1">@todo.Description</span>
+                    <span class="material-symbols-rounded delete" onclick="window.location.href = '?action=delete&id=@todo.Id'">delete</span>
                 </li>
             }
         </ul>
