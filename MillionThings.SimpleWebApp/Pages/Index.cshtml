@@ -29,9 +29,14 @@
             }
         </ul>
     </div>
-    <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#finishedTodos" aria-expanded="false" aria-controls="finishedTodos">
-        Show finished tasks
-    </button>
+    @{
+        if (Model.DoneTodos.Count > 0)
+        {
+            <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#finishedTodos" aria-expanded="false" aria-controls="finishedTodos">
+                Show @(Model.DoneTodos.Count == 1 ? Model.DoneTodos.Count + " finished task" : Model.DoneTodos.Count + " finished tasks")
+            </button>
+        }
+    }
     <div class="collapse" id="finishedTodos">
         <ul class="todos finished list-unstyled">
             @foreach (var todo in Model.DoneTodos)
