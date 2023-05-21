@@ -10,7 +10,7 @@
         <div>
             <div class="form-floating mb-2">
                 <input name="description" id="description" type="text" class="form-control" placeholder="Wash the dishes" required/>
-                <label for="description">Todo</label>
+                <label for="description">Add a task</label>
                 <div class="invalid-tooltip">
                     Please describe your task to add.
                 </div>
@@ -19,11 +19,25 @@
         </div>
     </form>
     <div>
-        <ul class="todos-open list-unstyled">
+        <ul class="todos open list-unstyled">
             @foreach (var todo in Model.Todos)
             {
                 <li>
                     <input type="checkbox" onchange="window.location.href = '?action=finish&id=@(todo.Id)'" class="form-check-input" aria-label="done"/>
+                    @todo.Description
+                </li>
+            }
+        </ul>
+    </div>
+    <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#finishedTodos" aria-expanded="false" aria-controls="finishedTodos">
+        Show finished tasks
+    </button>
+    <div class="collapse" id="finishedTodos">
+        <ul class="todos finished list-unstyled">
+            @foreach (var todo in Model.DoneTodos)
+            {
+                <li>
+                    <input type="checkbox" onchange="window.location.href = '?action=reopen&id=@(todo.Id)'" class="form-check-input" aria-label="done" checked/>
                     @todo.Description
                 </li>
             }

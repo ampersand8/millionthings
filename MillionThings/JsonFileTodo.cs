@@ -40,7 +40,7 @@ public class JsonFileTodo : Todo
         using var r = new StreamReader(path);
         string json = r.ReadToEnd();
         return JsonSerializer.Deserialize<List<TodoItem>>(json,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
     }
 
     public void Update(TodoItem item)
@@ -70,9 +70,7 @@ public class JsonFileTodo : Todo
 
     private void PersistToFile()
     {
-        using (StreamWriter sw = new StreamWriter(path))
-        {
-            sw.Write(JsonSerializer.Serialize(todos));
-        }
+        using var sw = new StreamWriter(path);
+        sw.Write(JsonSerializer.Serialize(todos));
     }
 }
