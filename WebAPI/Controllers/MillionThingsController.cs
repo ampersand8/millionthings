@@ -18,42 +18,40 @@ public class MillionThingsController : ControllerBase
     [HttpGet("{list}")]
     public IEnumerable<TodoItem> Get(string list)
     {
-        return getTodo(list).List();
+        return GetTodo(list).List();
     }
 
     [HttpGet("{list}/{id}")]
-    public TodoItem Get(string list, string id)
+    public TodoItem? Get(string list, string id)
     {
 
-        return getTodo(list).List().Find(t => t.Id.Equals(id));
+        return GetTodo(list).List().Find(t => t.Id.Equals(id));
     }
 
     [HttpPost("{list}")]
     public void Post(string list, [FromBody] string description)
     {
-        getTodo(list).Add(description);
+        GetTodo(list).Add(description);
     }
 
     [HttpPut("{list}/{id}")]
     public void Put(string list, string id, [FromBody] string value)
     {
-        getTodo(list).Update(new TodoItem { Id = id, Description = value });
+        GetTodo(list).Update(new TodoItem { Id = id, Description = value });
     }
 
     [HttpPost("{list}/{id}/done")]
     public void Done(string list, string id)
     {
-        getTodo(list).Done(id);
+        GetTodo(list).Done(id);
     }
 
-    private Todo getTodo(string todoList)
+    private Todo GetTodo(string todoList)
     {
-        todoLists.TryGetValue(todoList, out Todo todo);
-        if (todo == null)
-        {
-            todo = new JsonFileTodo($"{todoList}.json");
-            todoLists.Add(todoList, todo);
-        }
+        todoLists.TryGetValue(todoList, out Todo? todo);
+        if (todo is not null) return todo;
+        todo = new JsonFileTodo($"{todoList}.json");
+        todoLists.Add(todoList, todo);
         return todo;
     }
 }

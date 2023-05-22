@@ -39,6 +39,7 @@ public class JsonFileTodo : Todo
     {
         using var r = new StreamReader(path);
         string json = r.ReadToEnd();
+        if (string.IsNullOrEmpty(json)) return new();
         return JsonSerializer.Deserialize<List<TodoItem>>(json,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
     }

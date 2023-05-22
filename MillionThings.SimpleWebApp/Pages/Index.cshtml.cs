@@ -35,7 +35,7 @@ public class IndexModel : PageModel
                 Delete(id);
                 break;
             default:
-                logger.LogInformation("Unknown action {}", action);
+                logger.LogInformation("Unknown action {}", action.ToString());
                 break;
         }
 

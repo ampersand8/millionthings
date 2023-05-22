@@ -85,7 +85,7 @@ public class JsonFileTodoTest
     public void ShouldPersistTodosInJsonFile()
     {
         string filename = Guid.NewGuid().ToString();
-        Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename));
+        Todo? sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename));
         Assert.Empty(sut.List());
         sut.Add("Testing One");
         sut.Add("Testing Two");

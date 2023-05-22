@@ -38,7 +38,7 @@ public class Tui
 
             string? stringInput = input.ReadLine();
             parsedInput = ParseStringCommand(stringInput);
-            if (commands.TryGetValue(parsedInput, out Command currentCommand))
+            if (commands.TryGetValue(parsedInput, out Command? currentCommand))
             {
                 currentCommand.Run();
             }
@@ -52,8 +52,31 @@ public class Tui
 
     private static string AskForFilePath(TextReader input, TextWriter output)
     {
-        output.Write("Please enter path to todo json file: ");
-        return input.ReadLine();
+        do
+        {
+            output.Write("Please enter path to todo json file: ");
+            string? path = input.ReadLine();
+            if (path is null)
+            {
+                output.Write("Empty path is invalid");
+                continue;
+            }
+
+            try
+            {
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+
+                File.Create(path).Close();
+                return path;
+            }
+            catch (IOException)
+            {
+                output.Write("File {0} does not exist and can not be created", path);
+            }
+        } while (true);
     }
 
     private string ParseStringCommand(string? command)
@@ -65,15 +88,6 @@ public class Tui
         }
 
         return commands.FirstOrDefault(c => c.Value.IsCommand(command)).Key ?? "unknown";
-        /*foreach (var cmd in commands)
-        {
-            if (cmd.Value.IsCommand(command))
-            {
-                return cmd.Key;
-            }
-        }
-
-        return "unknown";*/
     }
 
     private void UpdateTodo()
@@ -84,23 +98,64 @@ public class Tui
             return;
         }
 
-        output.Write("id: ");
-        string inputId = input.ReadLine();
-        int? id = Int32.TryParse(inputId, out int parsedId) ? parsedId : null;
-        output.Write("description: ");
-        string description = input.ReadLine();
-        if (id is not null && id <= todos.Count)
+        int id = AskId();
+        string description = AskDescription();
+        if (id <= todos.Count)
         {
-            todo.Update(new TodoItem(todos[id.Value - 1].Id, description));
+            todo.Update(new TodoItem(todos[id - 1].Id, description));
         }
 
         output.WriteLine("Updated");
     }
 
+    private int AskId()
+    {
+        var successfulParse = false;
+        int id;
+        do
+        {
+            output.Write("id: ");
+            string? inputId = input.ReadLine();
+            successfulParse = Int32.TryParse(inputId, out id);
+            if (!successfulParse)
+            {
+                output.WriteLine("Invalid id '{0}', choose between 1 and {1}", inputId, todos.Count);
+            }
+            else if (successfulParse && id > todos.Count)
+            {
+                output.WriteLine("Id not available, choose between 1 and {0}", todos.Count);
+                successfulParse = false;
+            }
+        } while (!successfulParse);
+
+        return id;
+    }
+
+    private string AskDescription()
+    {
+        var successfulDescription = false;
+        string description = "";
+        do
+        {
+            output.Write("description: ");
+            string? inDescription = input.ReadLine();
+            if (inDescription is null || inDescription.Length == 0)
+            {
+                output.WriteLine("Description can not be empty. Given: {0}", inDescription);
+            }
+            else
+            {
+                successfulDescription = true;
+                description = inDescription;
+            }
+        } while (!successfulDescription);
+
+        return description;
+    }
+
     private void AddQuestion()
     {
-        output.Write("description: ");
-        string description = input.ReadLine();
+        string description = AskDescription();
         todo.Add(description);
         output.WriteLine("Added");
     }
@@ -113,13 +168,8 @@ public class Tui
             return;
         }
 
-        output.Write("id: ");
-        string inputId = input.ReadLine();
-        int? id = Int32.TryParse(inputId, out int parsedId) ? parsedId : null;
-        if (id is not null && id <= todos.Count)
-        {
-            todo.Done(todos[id.Value - 1].Id);
-        }
+        int id = AskId();
+        todo.Done(todos[id - 1].Id);
 
         output.WriteLine("Done");
     }
@@ -145,7 +195,7 @@ public class Tui
         }
     }
 
-    private void PrintUnknownCommand(string command)
+    private void PrintUnknownCommand(string? command)
     {
         output.WriteLine($"Unknown command: {command}\n");
     }
