@@ -4,6 +4,15 @@
     ViewData["Title"] = null;
 }
 
+<script type="text/javascript">
+    function prepareEditTask(id, description, status) {
+        console.log("prepareEditTask", id, description, status);
+        document.getElementById("editTaskId").value = id;
+        document.getElementById("editTaskDescription").value = description;
+        document.getElementById("editTaskStatus").value = status;
+    }
+</script>
+
 <div class="text-center">
     <h1 class="display-4">MillionThings</h1>
     <form method="post" class="needs-validation" novalidate>
@@ -25,6 +34,7 @@
                 <li>
                     <input type="checkbox" onchange="window.location.href = '?action=finish&id=@(todo.Id)'" class="form-check-input" aria-label="done"/>
                     <span style="flex-grow: 1">@todo.Description</span>
+                    <span class="material-symbols-rounded pointer edit" data-bs-toggle="modal" data-bs-target="#editModal" onclick="prepareEditTask('@todo.Id', '@todo.Description', '@todo.Status')">edit</span>
                     <span class="material-symbols-rounded delete" onclick="window.location.href = '?action=delete&id=@todo.Id'">delete</span>
                 </li>
             }
@@ -49,6 +59,34 @@
                 </li>
             }
         </ul>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" asp-page-handler="Edit" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="editTaskId" name="id" type="hidden" required readonly/>
+                        <input id="editTaskStatus" name="status" type="hidden" required readonly/>
+                        <div class="form-floating mb-2">
+                            <input name="description" id="editTaskDescription" type="text" class="form-control" placeholder="Wash the dishes" required/>
+                            <label for="description">Add a task</label>
+                            <div class="invalid-tooltip">
+                                Please describe your task to add.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
 </div>

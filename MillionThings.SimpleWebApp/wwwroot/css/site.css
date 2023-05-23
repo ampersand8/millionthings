@@ -1,41 +1,40 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .material-symbols-rounded {
-    font-variation-settings:
-            'FILL' 0,
-            'wght' 700,
-            'GRAD' 0,
-            'opsz' 48
+    font-variation-settings: 'FILL' 0,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 48
 }
 
 ul.todos li {
-  display: flex;
-  text-align: left;
-  margin-bottom: 1em;
-  padding: .2em;
-  background-color: hsl(187, 100%, 98%);
-  border-radius: .5em;
+    display: flex;
+    text-align: left;
+    margin-bottom: 1em;
+    padding: .5em;
+    background-color: hsl(187, 100%, 98%);
+    border-radius: .5em;
 }
 
 ul.todos li:hover {
@@ -43,19 +42,27 @@ ul.todos li:hover {
 }
 
 ul.todos li input[type=checkbox] {
-  margin-right: .5em;
+    margin-right: .5em;
 }
 
-ul.todos li input[type=checkbox]:hover {
-  cursor: pointer;
+ul.todos li input[type=checkbox]:hover, .pointer:hover {
+    cursor: pointer;
 }
 
 ul.todos.finished li {
-  text-decoration: line-through;
-  color: hsl(0, 0%, 42%);
+    text-decoration: line-through;
+    color: hsl(0, 0%, 42%);
+}
+
+.edit, .delete {
+    color: #5e5e5e;
+}
+
+.edit:hover {
+    color: #0d6efd;
 }
 
 .delete:hover {
     cursor: pointer;
-    color: red;
+    color: #d30000;
 }

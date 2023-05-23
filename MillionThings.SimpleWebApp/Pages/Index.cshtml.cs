@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Primitives;
 using MillionThings.Core;
@@ -47,6 +48,13 @@ public class IndexModel : PageModel
         if (!ModelState.IsValid) return RedirectToPage("Index");
         logger.LogInformation("I just got a post request! {}", description);
         todo.Add(description);
+        return RedirectToPage("Index");
+    }
+
+    public IActionResult OnPostEdit([FromForm] Dictionary<string,string> model)
+    {
+        logger.LogInformation("Updating task: {}", model);
+        todo.Update(new TodoItem(model["id"], model["description"], TodoStatus.Open));
         return RedirectToPage("Index");
     }
 
