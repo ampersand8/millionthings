@@ -10,7 +10,7 @@ public enum TodoStatus
 
 public class TodoItem
 {
-    public TodoItem() : this(Guid.NewGuid().ToString(), "", TodoStatus.Open)
+    public TodoItem(string description = "") : this(Guid.NewGuid().ToString(), description, TodoStatus.Open)
     {
     }
 
