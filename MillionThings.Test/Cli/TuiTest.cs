@@ -1,14 +1,6 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MillionThings.Cli;
+﻿using MillionThings.Cli;
 
-namespace MillionThings.Test
+namespace MillionThings.Test.Cli
 {
     public class TuiTest
     {

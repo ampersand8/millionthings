@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.SimpleWebApp"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.Database", "MillionThings.Database\MillionThings.Database.csproj", "{EECEA958-AB08-4D05-B0E1-FB931C494963}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.SimpleWebApp.Tests", "MillionThings.SimpleWebApp.Tests\MillionThings.SimpleWebApp.Tests.csproj", "{52B512FD-EB02-4BF9-AFB3-6AE6A25E2491}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{EECEA958-AB08-4D05-B0E1-FB931C494963}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EECEA958-AB08-4D05-B0E1-FB931C494963}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EECEA958-AB08-4D05-B0E1-FB931C494963}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52B512FD-EB02-4BF9-AFB3-6AE6A25E2491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52B512FD-EB02-4BF9-AFB3-6AE6A25E2491}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52B512FD-EB02-4BF9-AFB3-6AE6A25E2491}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52B512FD-EB02-4BF9-AFB3-6AE6A25E2491}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

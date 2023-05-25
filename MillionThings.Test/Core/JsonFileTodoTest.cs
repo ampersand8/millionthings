@@ -1,6 +1,6 @@
 ﻿using MillionThings.Core;
 
-namespace MillionThings.Test;
+namespace MillionThings.Test.Core;
 
 public class JsonFileTodoTest
 {
@@ -36,7 +36,11 @@ public class JsonFileTodoTest
     public void ShouldListTodosFromGivenJsonFile()
     {
         Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/twotodos.json"));
-        List<TodoItem> expected = new() { new() { Id = "1", Description = "This is the first todo" }, new() { Id = "2", Description = "This is the second todo" } };
+        List<TodoItem> expected = new()
+        {
+            new() { Id = "1", Description = "This is the first todo" },
+            new() { Id = "2", Description = "This is the second todo" }
+        };
         Assert.Equal(expected, sut.List());
     }
 
@@ -56,7 +60,8 @@ public class JsonFileTodoTest
         sut.Add("This is my one and only todo");
         Assert.Contains(sut.List(), item => item.Description == "This is my one and only todo");
         sut.Done(sut.List()[0].Id);
-        Assert.Contains(sut.List(), item => item.Description == "This is my one and only todo" && item.Status == TodoStatus.Done);
+        Assert.Contains(sut.List(),
+            item => item.Description == "This is my one and only todo" && item.Status == TodoStatus.Done);
     }
 
     [Theory]
@@ -97,7 +102,8 @@ public class JsonFileTodoTest
         sut = null;
 
         Todo reloadedSut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename));
-        Assert.Contains(reloadedSut.List(), item => item.Description == "Testing One" && item.Status == TodoStatus.Done);
+        Assert.Contains(reloadedSut.List(),
+            item => item.Description == "Testing One" && item.Status == TodoStatus.Done);
         Assert.Contains(reloadedSut.List(), item => item.Description == "Testing Two");
     }
 
@@ -153,7 +159,7 @@ public class JsonFileTodoTest
         Assert.Single(sut.List());
         Assert.Contains(sut.List(), item => item.Description == "Testing One");
     }
-    
+
     [Fact]
     public void ShouldRemoveTodoWhenDeleteIsCalled()
     {
