@@ -10,10 +10,11 @@ public enum TodoStatus
 
 public class TodoItem
 {
-    public TodoItem() : this(Guid.NewGuid().ToString(), "", TodoStatus.Open)
+    public TodoItem(string description = "") : this(Guid.NewGuid().ToString(), description, TodoStatus.Open)
     {
     }
 
+    [JsonConstructor]
     public TodoItem(string id, string description, TodoStatus status = TodoStatus.Open)
     {
         Id = id;

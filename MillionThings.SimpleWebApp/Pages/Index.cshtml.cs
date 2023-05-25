@@ -9,14 +9,15 @@ namespace MillionThings.SimpleWebApp.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> logger;
-    private readonly Todo todo = new JsonFileTodo("todos.json");
+    private readonly Todo todo;
 
     public List<TodoItem> Todos => todo.List().FindAll(t => t.Status == TodoStatus.Open);
     public List<TodoItem> DoneTodos => todo.List().FindAll(t => t.Status == TodoStatus.Done);
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public IndexModel(ILogger<IndexModel> logger, string todoFile = "todos.json")
     {
         this.logger = logger;
+        todo = new JsonFileTodo(todoFile);
     }
 
     public void OnGet()
