@@ -14,6 +14,7 @@ public class TodoItem
     {
     }
 
+    [JsonConstructor]
     public TodoItem(string id, string description, TodoStatus status = TodoStatus.Open)
     {
         Id = id;
