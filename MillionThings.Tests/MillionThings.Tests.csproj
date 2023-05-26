@@ -23,6 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\MillionThings.Database\MillionThings.Database.csproj" />
 		<ProjectReference Include="..\MillionThings.SimpleWebApp\MillionThings.SimpleWebApp.csproj" />
 		<ProjectReference Include="..\MillionThings\MillionThings.Core.csproj" />
 		<ProjectReference Include="..\MillionThings.Cli\MillionThings.Cli.csproj" />

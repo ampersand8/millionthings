@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MillionThings.Core", "MillionThings\MillionThings.Core.csproj", "{3883BF7B-D05D-4CB0-9F10-D5EE56C2AC94}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MillionThings.Test", "MillionThings.Test\MillionThings.Test.csproj", "{5554A3CE-B306-46BA-BEE6-2F426EF2099E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MillionThings.Tests", "MillionThings.Tests\MillionThings.Tests.csproj", "{5554A3CE-B306-46BA-BEE6-2F426EF2099E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MillionThings.WebAPI", "WebAPI\MillionThings.WebAPI.csproj", "{2CE2AFDC-CBBF-466D-B99F-C9B4110C2281}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.SimpleWebApp", "MillionThings.SimpleWebApp\MillionThings.SimpleWebApp.csproj", "{A96CF0AE-BB11-4111-BE22-CC8FA98DC947}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.Database", "MillionThings.Database\MillionThings.Database.csproj", "{EECEA958-AB08-4D05-B0E1-FB931C494963}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.IntegrationTests", "MillionThings.IntegrationTests\MillionThings.IntegrationTests.csproj", "{5F7323A2-E006-410E-934C-9C2B2FAB5167}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{EECEA958-AB08-4D05-B0E1-FB931C494963}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EECEA958-AB08-4D05-B0E1-FB931C494963}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EECEA958-AB08-4D05-B0E1-FB931C494963}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

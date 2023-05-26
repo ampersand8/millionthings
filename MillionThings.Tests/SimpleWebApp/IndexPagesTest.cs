@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using MillionThings.SimpleWebApp.Pages;
 
-namespace MillionThings.Test.SimpleWebApp;
+namespace MillionThings.Tests.SimpleWebApp;
 
 public class IndexPagesTest
 {

@@ -1,6 +1,6 @@
 ﻿using MillionThings.Core;
 
-namespace MillionThings.Test.Core;
+namespace MillionThings.Tests.Core;
 
 public class JsonFileTodoTest
 {
