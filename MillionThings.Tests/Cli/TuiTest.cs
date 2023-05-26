@@ -2,6 +2,7 @@
 
 namespace MillionThings.Tests.Cli;
 
+// TODO: make tests os independent by not hardcoding specifics like `Environment.NewLine` instead of "\n"
 public class TuiTest
 {
     [Fact]
