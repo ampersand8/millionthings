@@ -4,8 +4,8 @@ name: Tests
 on: push
 
 jobs:
-  build:
-    runs-on: windows-latest
+  tests:
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2.1.0
       - name: Unit Tests
