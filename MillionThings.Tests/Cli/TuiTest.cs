@@ -2,7 +2,6 @@
 
 namespace MillionThings.Tests.Cli;
 
-// TODO: make tests os independent by not hardcoding specifics like `Environment.NewLine` instead of "\n"
 public class TuiTest
 {
     [Fact]
@@ -32,7 +31,7 @@ public class TuiTest
         string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename);
 
         var writer = new StringWriter();
-        var input = new StringReader("quit\n");
+        var input = new StringReader("quit" + Environment.NewLine);
 
         var sut = new Tui(input, writer, path);
 
@@ -61,7 +60,7 @@ public class TuiTest
 
         List<string> expectedOutput = new() { "Todos:" };
         expectedOutput.AddRange(enterCommandPrompt);
-        expectedOutput.AddRange(new[] { "#> description: Added", "\nTodos:", "    1): this is a test", });
+        expectedOutput.AddRange(new[] { "#> description: Added", "", "Todos:", "    1): this is a test", });
         expectedOutput.AddRange(enterCommandPrompt);
         expectedOutput.Add("#>");
         string[] actualOutput = writer.ToString().Trim().Split(Environment.NewLine);
@@ -85,9 +84,9 @@ public class TuiTest
 
         List<string> expectedOutput = new() { "Todos:" };
         expectedOutput.AddRange(enterCommandPrompt);
-        expectedOutput.AddRange(new[] { "#> description: Added", "\nTodos:", "    1): this is a test" });
+        expectedOutput.AddRange(new[] { "#> description: Added", "", "Todos:", "    1): this is a test" });
         expectedOutput.AddRange(enterCommandPrompt);
-        expectedOutput.AddRange(new[] { "#> id: Done", "\nTodos:", });
+        expectedOutput.AddRange(new[] { "#> id: Done", "", "Todos:", });
         expectedOutput.AddRange(enterCommandPrompt);
         expectedOutput.Add("#>");
         string[] actualOutput = writer.ToString().Trim().Split(Environment.NewLine);
@@ -111,10 +110,10 @@ public class TuiTest
 
         List<string> expectedOutput = new() { "Todos:" };
         expectedOutput.AddRange(enterCommandPrompt);
-        expectedOutput.AddRange(new[] { "#> description: Added", "\nTodos:", "    1): this is a test" });
+        expectedOutput.AddRange(new[] { "#> description: Added", "", "Todos:", "    1): this is a test" });
         expectedOutput.AddRange(enterCommandPrompt);
         expectedOutput.AddRange(new[]
-            { "#> id: description: Updated", "\nTodos:", "    1): not sure if it's a test" });
+            { "#> id: description: Updated", "", "Todos:", "    1): not sure if it's a test" });
         expectedOutput.AddRange(enterCommandPrompt);
         expectedOutput.Add("#>");
         string[] actualOutput = writer.ToString().Trim().Split(Environment.NewLine);
@@ -137,7 +136,7 @@ public class TuiTest
 
         List<string> expectedOutput = new() { "Todos:" };
         expectedOutput.AddRange(enterCommandPrompt);
-        expectedOutput.AddRange(new[] { "#> Unknown command: asdf\n", "\nTodos:" });
+        expectedOutput.AddRange(new[] { "#> Unknown command: asdf", "", "", "Todos:" });
         expectedOutput.AddRange(enterCommandPrompt);
         expectedOutput.Add("#>");
 
@@ -147,7 +146,8 @@ public class TuiTest
 
     private List<string> enterCommandPrompt = new List<string>()
     {
-        "\nPlease enter command:",
+        "",
+        "Please enter command:",
         "     add: Add new todo",
         "    done: Mark a todo as done",
         "    edit: Edit a todo",

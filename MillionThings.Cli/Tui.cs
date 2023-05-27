@@ -176,7 +176,7 @@ public class Tui
 
     private void PrintCommandQuery()
     {
-        output.WriteLine("\nPlease enter command:");
+        output.WriteLine(Environment.NewLine + "Please enter command:");
         foreach (var command in commands)
         {
             output.WriteLine($"{command.Value.GetCommands()[0],8}: {command.Value.GetDescription()}");
@@ -187,7 +187,7 @@ public class Tui
 
     private void PrintTodos()
     {
-        output.WriteLine("\nTodos:");
+        output.WriteLine(Environment.NewLine + "Todos:");
         todos = todo.List().FindAll(todo => todo.Status == TodoStatus.Open);
         for (int index = 0; index < todos.Count; index++)
         {
@@ -197,6 +197,6 @@ public class Tui
 
     private void PrintUnknownCommand(string? command)
     {
-        output.WriteLine($"Unknown command: {command}\n");
+        output.WriteLine($"Unknown command: {command}" + Environment.NewLine);
     }
 }
