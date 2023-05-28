@@ -8,9 +8,17 @@ namespace MillionThings.Core;
 
 public interface Todo
 {
-    List<TodoItem> List();
-    void Add(string description);
-    void Done(string id);
-    void Update(TodoItem item);
-    void Delete(string id);
+    List<TodoTask> List();
+    TodoTask Add(string description);
+    /// <summary>
+    /// Marks the given task as done
+    /// </summary>
+    /// <returns>Task that was marked as done. Null if no matching task was found.</returns>
+    TodoTask? Done(string id);
+    TodoTask Update(TodoTask task);
+    /// <summary>
+    /// Removes a task
+    /// </summary>
+    /// <returns>Task that was deleted. Null if no matching task was found.</returns>
+    TodoTask? Delete(string id);
 }

@@ -16,13 +16,13 @@ public class MillionThingsController : ControllerBase
     }
 
     [HttpGet("{list}")]
-    public IEnumerable<TodoItem> Get(string list)
+    public IEnumerable<TodoTask> Get(string list)
     {
         return GetTodo(list).List();
     }
 
     [HttpGet("{list}/{id}")]
-    public TodoItem? Get(string list, string id)
+    public TodoTask? Get(string list, string id)
     {
 
         return GetTodo(list).List().Find(t => t.Id.Equals(id));
@@ -37,7 +37,7 @@ public class MillionThingsController : ControllerBase
     [HttpPut("{list}/{id}")]
     public void Put(string list, string id, [FromBody] string value)
     {
-        GetTodo(list).Update(new TodoItem { Id = id, Description = value });
+        GetTodo(list).Update(new TodoTask { Id = id, Description = value });
     }
 
     [HttpPost("{list}/{id}/done")]

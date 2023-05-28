@@ -11,8 +11,8 @@ public class IndexModel : PageModel
     private readonly ILogger<IndexModel> logger;
     private readonly Todo todo;
 
-    public List<TodoItem> Todos => todo.List().FindAll(t => t.Status == TodoStatus.Open);
-    public List<TodoItem> DoneTodos => todo.List().FindAll(t => t.Status == TodoStatus.Done);
+    public List<TodoTask> Todos => todo.List().FindAll(t => t.Status == TodoStatus.Open);
+    public List<TodoTask> DoneTodos => todo.List().FindAll(t => t.Status == TodoStatus.Done);
 
     public IndexModel(ILogger<IndexModel> logger, string todoFile = "todos.json")
     {
@@ -55,7 +55,7 @@ public class IndexModel : PageModel
     public IActionResult OnPostEdit([FromForm] Dictionary<string,string> model)
     {
         logger.LogInformation("Updating task: {}", model);
-        todo.Update(new TodoItem(model["id"], model["description"], TodoStatus.Open));
+        todo.Update(new TodoTask(model["id"], model["description"], TodoStatus.Open));
         return RedirectToPage("Index");
     }
 
@@ -69,10 +69,10 @@ public class IndexModel : PageModel
     private void Reopen(string? id)
     {
         if (id == null) return;
-        TodoItem? task = todo.List().Find(t => t.Id == id);
+        TodoTask? task = todo.List().Find(t => t.Id == id);
         if (task == null) return;
         logger.LogInformation("Reopening todo {}", id);
-        todo.Update(new TodoItem { Id = task.Id, Description = task.Description, Status = TodoStatus.Open });
+        todo.Update(new TodoTask { Id = task.Id, Description = task.Description, Status = TodoStatus.Open });
     }
 
     private void Delete(string? id)

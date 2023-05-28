@@ -5,7 +5,7 @@ namespace MillionThings.Cli;
 public class Tui
 {
     private readonly Todo todo;
-    private List<TodoItem> todos = new List<TodoItem>();
+    private List<TodoTask> todos = new List<TodoTask>();
     private readonly Dictionary<string, Command> commands = new Dictionary<string, Command>();
     private readonly TextReader input;
     private readonly TextWriter output;
@@ -102,7 +102,7 @@ public class Tui
         string description = AskDescription();
         if (id <= todos.Count)
         {
-            todo.Update(new TodoItem(todos[id - 1].Id, description));
+            todo.Update(new TodoTask(todos[id - 1].Id, description));
         }
 
         output.WriteLine("Updated");

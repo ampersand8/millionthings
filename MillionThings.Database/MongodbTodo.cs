@@ -5,37 +5,39 @@ namespace MillionThings.Database;
 
 public class MongodbTodo : Todo
 {
-    private readonly IMongoCollection<TodoItem> todos;
+    private readonly IMongoCollection<TodoTask> todos;
 
     public MongodbTodo(string connectionString, string database)
     {
-        todos = new MongoClient(connectionString).GetDatabase(database).GetCollection<TodoItem>("todos");
+        todos = new MongoClient(connectionString).GetDatabase(database).GetCollection<TodoTask>("todos");
     }
 
-    public List<TodoItem> List()
+    public List<TodoTask> List()
     {
         return todos.Find(_ => true).ToList();
     }
 
-    public void Add(string description)
+    public TodoTask Add(string description)
     {
-        todos.InsertOne(new TodoItem(description));
+        var newTask = new TodoTask(description);
+        todos.InsertOne(newTask);
+        return newTask;
     }
 
-    public void Done(string id)
+    public TodoTask? Done(string id)
     {
-        todos.UpdateOne(
-            Builders<TodoItem>.Filter.Eq(todo => todo.Id, id),
-            Builders<TodoItem>.Update.Set(todo => todo.Status, TodoStatus.Done));
+        return todos.FindOneAndUpdate(
+            Builders<TodoTask>.Filter.Eq(todo => todo.Id, id),
+            Builders<TodoTask>.Update.Set(todo => todo.Status, TodoStatus.Done));
     }
 
-    public void Update(TodoItem item)
+    public TodoTask Update(TodoTask task)
     {
-        todos.ReplaceOne(Builders<TodoItem>.Filter.Eq(todo => todo.Id, item.Id), item);
+        return todos.FindOneAndReplace(Builders<TodoTask>.Filter.Eq(todo => todo.Id, task.Id), task);
     }
 
-    public void Delete(string id)
+    public TodoTask? Delete(string id)
     {
-        todos.DeleteOne(Builders<TodoItem>.Filter.Eq(todo => todo.Id, id));
+        return todos.FindOneAndDelete(Builders<TodoTask>.Filter.Eq(todo => todo.Id, id));
     }
 }

@@ -28,7 +28,7 @@ public class JsonFileTodoTest
     public void ShouldListTodoFromGivenJsonFile()
     {
         Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/onetodo.json"));
-        List<TodoItem> expected = new() { new() { Id = "1", Description = "This is the first todo" } };
+        List<TodoTask> expected = new() { new() { Id = "1", Description = "This is the first todo" } };
         Assert.Equal(expected, sut.List());
     }
 
@@ -36,7 +36,7 @@ public class JsonFileTodoTest
     public void ShouldListTodosFromGivenJsonFile()
     {
         Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/twotodos.json"));
-        List<TodoItem> expected = new()
+        List<TodoTask> expected = new()
         {
             new() { Id = "1", Description = "This is the first todo" },
             new() { Id = "2", Description = "This is the second todo" }
@@ -61,7 +61,7 @@ public class JsonFileTodoTest
         Assert.Contains(sut.List(), item => item.Description == "This is my one and only todo");
         sut.Done(sut.List()[0].Id);
         Assert.Contains(sut.List(),
-            item => item.Description == "This is my one and only todo" && item.Status == TodoStatus.Done);
+            task => task is { Description: "This is my one and only todo", Status: TodoStatus.Done });
     }
 
     [Theory]
@@ -79,11 +79,13 @@ public class JsonFileTodoTest
     [Theory]
     [InlineData("SOME_WRONG_ID")]
     [InlineData("")]
+    [InlineData(null)]
     public void ShouldNotFailWhenSettingANonExistentTodoToDoneWhenNoTodosExist(string inputId)
     {
         Todo sut = CreateRandomTodo();
-        sut.Done(inputId);
+        var result = sut.Done(inputId);
         Assert.Empty(sut.List());
+        Assert.Null(result);
     }
 
     [Fact]
@@ -108,17 +110,17 @@ public class JsonFileTodoTest
     }
 
     [Fact]
-    public void ShouldNotAddAlreadyExistingTodo()
+    public void ShouldAddTaskWithSameDescription()
     {
         Todo sut = CreateRandomTodo();
 
         sut.Add("Testing One");
-        List<TodoItem> expected = new() { new() { Id = "1", Description = "This is the first todo" } };
         Assert.Single(sut.List());
 
-        sut.Add("Testing One");
-        Assert.Single(sut.List());
-        Assert.Contains(sut.List(), item => item.Description == "Testing One");
+        var result = sut.Add("Testing One");
+        Assert.Equal("Testing One", result.Description);
+        Assert.Equal(TodoStatus.Open, result.Status);
+        Assert.Equal(2, sut.List().FindAll(todo => todo.Description == "Testing One").Count);
     }
 
     [Fact]
@@ -127,7 +129,7 @@ public class JsonFileTodoTest
         Todo sut = CreateRandomTodo();
 
         sut.Add("Testing One");
-        TodoItem savedTodo = sut.List().First();
+        TodoTask savedTodo = sut.List().First();
 
         sut.Update(new() { Id = savedTodo.Id, Description = "Updated todo description" });
         Assert.Single(sut.List());
@@ -156,7 +158,7 @@ public class JsonFileTodoTest
         sut.Add("Testing One");
 
         sut.Update(new() { Id = "ID_DOES_NOT_EXIST", Description = "Testing One" });
-        Assert.Single(sut.List());
+        Assert.Equal(2, sut.List().Count);
         Assert.Contains(sut.List(), item => item.Description == "Testing One");
     }
 
@@ -166,10 +168,35 @@ public class JsonFileTodoTest
         Todo sut = CreateRandomTodo();
 
         sut.Add("Testing One");
-        TodoItem savedTodo = sut.List().First();
+        TodoTask savedTodo = sut.List().First();
 
         sut.Delete(savedTodo.Id);
         Assert.Empty(sut.List());
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void ShouldIgnoreDeletingATaskWithNullOrEmptyId(string inputId)
+    {
+        Todo sut = CreateRandomTodo();
+        
+        sut.Add("Testing One");
+        
+        sut.Delete(inputId);
+        Assert.Single(sut.List());
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void ShouldFailAddingATaskWithNullOrEmptyDescription(string inputDescription)
+    {
+        Todo sut = CreateRandomTodo();
+        
+        var exception = Assert.Throws<ArgumentException>(() => sut.Add(inputDescription));
+        
+        Assert.Equal("Description can not be empty or null", exception.Message);
     }
 
     private static Todo CreateRandomTodo()

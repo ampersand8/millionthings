@@ -8,14 +8,14 @@ public enum TodoStatus
     Done
 }
 
-public class TodoItem
+public class TodoTask
 {
-    public TodoItem(string description = "") : this(Guid.NewGuid().ToString(), description, TodoStatus.Open)
+    public TodoTask(string description = "") : this(Guid.NewGuid().ToString(), description, TodoStatus.Open)
     {
     }
 
     [JsonConstructor]
-    public TodoItem(string id, string description, TodoStatus status = TodoStatus.Open)
+    public TodoTask(string id, string description, TodoStatus status = TodoStatus.Open)
     {
         Id = id;
         Description = description;
@@ -31,7 +31,7 @@ public class TodoItem
 
     public override bool Equals(object? obj)
     {
-        if (obj is TodoItem item)
+        if (obj is TodoTask item)
         {
             return item.Description == Description && item.Id == Id;
         }
@@ -43,7 +43,7 @@ public class TodoItem
         return Description.GetHashCode();
     }
 
-    public TodoItem Finish()
+    public TodoTask Finish()
     {
         return new(Id, Description, TodoStatus.Done);
     }
