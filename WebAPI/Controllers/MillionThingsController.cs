@@ -4,13 +4,13 @@ using MillionThings.Core;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace WebAPI.Controllers;
+namespace MillionThings.WebAPI.Controllers;
 
 [Route("api/todos")]
 [ApiController]
 public class MillionThingsController : ControllerBase
 {
-    private Dictionary<string, Todo> todoLists = new Dictionary<string, Todo>();
+    private readonly Dictionary<string, Todo> todoLists = new Dictionary<string, Todo>();
     public MillionThingsController()
     {
     }
@@ -29,21 +29,21 @@ public class MillionThingsController : ControllerBase
     }
 
     [HttpPost("{list}")]
-    public void Post(string list, [FromBody] string description)
+    public TodoTask Post(string list, [FromBody] string description)
     {
-        GetTodo(list).Add(description);
+        return GetTodo(list).Add(description);
     }
 
     [HttpPut("{list}/{id}")]
-    public void Put(string list, string id, [FromBody] string value)
+    public TodoTask Put(string list, string id, [FromBody] string value)
     {
-        GetTodo(list).Update(new TodoTask { Id = id, Description = value });
+        return GetTodo(list).Update(new TodoTask { Id = id, Description = value });
     }
 
     [HttpPost("{list}/{id}/done")]
-    public void Done(string list, string id)
+    public TodoTask? Done(string list, string id)
     {
-        GetTodo(list).Done(id);
+        return GetTodo(list).Done(id);
     }
 
     private Todo GetTodo(string todoList)

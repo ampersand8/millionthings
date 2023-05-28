@@ -8,6 +8,7 @@ public class JsonFileTodoTest
     public void ShouldInstantiateWithExistingJsonFile()
     {
         Todo sut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources/onetodo.json"));
+        Assert.NotNull(sut);
     }
 
     [Fact]
@@ -15,6 +16,7 @@ public class JsonFileTodoTest
     {
         string filename = Guid.NewGuid().ToString();
         Todo sut = new JsonFileTodo(filename);
+        Assert.NotNull(sut);
     }
 
     [Fact]
@@ -101,8 +103,6 @@ public class JsonFileTodoTest
         sut.Done(sut.List().First().Id);
         Assert.Contains(sut.List(), item => item.Description == "Testing One" && item.Status == TodoStatus.Done);
 
-        sut = null;
-
         Todo reloadedSut = new JsonFileTodo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename));
         Assert.Contains(reloadedSut.List(),
             item => item.Description == "Testing One" && item.Status == TodoStatus.Done);
@@ -145,7 +145,7 @@ public class JsonFileTodoTest
         sut.Add("Testing One");
 
         sut.Update(new() { Id = "ID_DOES_NOT_EXIST", Description = "Updated todo description" });
-        Assert.Equal(2, sut.List().Count());
+        Assert.Equal(2, sut.List().Count);
         Assert.Contains(sut.List(), item => item.Description == "Testing One");
         Assert.Contains(sut.List(), item => item.Description == "Updated todo description");
     }

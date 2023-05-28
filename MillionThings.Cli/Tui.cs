@@ -45,7 +45,6 @@ public class Tui
             else
             {
                 PrintUnknownCommand(stringInput);
-                continue;
             }
         } while (parsedInput != "quit");
     }
@@ -121,7 +120,7 @@ public class Tui
             {
                 output.WriteLine("Invalid id '{0}', choose between 1 and {1}", inputId, todos.Count);
             }
-            else if (successfulParse && id > todos.Count)
+            else if (id > todos.Count)
             {
                 output.WriteLine("Id not available, choose between 1 and {0}", todos.Count);
                 successfulParse = false;
@@ -177,9 +176,9 @@ public class Tui
     private void PrintCommandQuery()
     {
         output.WriteLine(Environment.NewLine + "Please enter command:");
-        foreach (var command in commands)
+        foreach (var command in commands.Values)
         {
-            output.WriteLine($"{command.Value.GetCommands()[0],8}: {command.Value.GetDescription()}");
+            output.WriteLine($"{command.GetCommands()[0],8}: {command.GetDescription()}");
         }
 
         output.Write("#> ");
