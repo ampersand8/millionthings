@@ -8,6 +8,8 @@ namespace MillionThings.Core;
 
 public interface Todo
 {
+    string Name();
+    Todo Rename(string newName);
     List<TodoTask> List();
     TodoTask Add(string description);
     /// <summary>

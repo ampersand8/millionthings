@@ -1,7 +1,11 @@
-[
-  {
-    "id": "1",
-    "description": "This is the first todo",
-    "status":  "open"
-  }
-]
+{
+  "id": "1",
+  "name": "Test List",
+  "tasks": [
+    {
+      "id": "1",
+      "description": "This is the first todo",
+      "status": "open"
+    }
+  ]
+}

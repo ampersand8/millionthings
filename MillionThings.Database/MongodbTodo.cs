@@ -12,6 +12,16 @@ public class MongodbTodo : Todo
         todos = new MongoClient(connectionString).GetDatabase(database).GetCollection<TodoTask>("todos");
     }
 
+    public string Name()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Todo Rename(string newName)
+    {
+        throw new NotImplementedException();
+    }
+
     public List<TodoTask> List()
     {
         return todos.Find(_ => true).ToList();

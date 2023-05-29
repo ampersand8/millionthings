@@ -144,7 +144,7 @@ public class TuiTest
         Assert.Equal(expectedOutput, actualOutput);
     }
 
-    private List<string> enterCommandPrompt = new List<string>()
+    private readonly List<string> enterCommandPrompt = new()
     {
         "",
         "Please enter command:",

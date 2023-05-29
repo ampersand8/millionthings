@@ -1,50 +1,69 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MillionThings.Core;
 
 public class JsonFileTodo : Todo
 {
-    private readonly List<TodoTask> todos;
+    private TodoData data;
     private readonly string path;
+
+    private List<TodoTask> tasks => data.Tasks;
 
     public JsonFileTodo(string path)
     {
-        this.path = path;
         CreateFileIfNotExists(path);
-        todos = LoadJsonFile(path);
+        data = LoadJsonFile(path);
+        this.path = path;
     }
 
+    public JsonFileTodo(string path, TodoData data)
+    {
+        this.path = path;
+        this.data = data;
+    }
+
+    public string Name()
+    {
+        return data.Name;
+    }
+
+    public Todo Rename(string newName)
+    {
+        data = new TodoData(data.Id, newName, tasks);
+        return this;
+    }
 
     public List<TodoTask> List()
     {
-        return todos;
+        return tasks;
     }
 
     public TodoTask Add(string description)
     {
         if (string.IsNullOrEmpty(description)) throw new ArgumentException("Description can not be empty or null");
         var newTask = new TodoTask() { Description = description };
-        todos.Add(newTask);
+        tasks.Add(newTask);
         PersistToFile();
         return newTask;
     }
 
     public TodoTask? Done(string id)
     {
-        TodoTask? todo = todos.Find(todo => todo.Id == id);
+        TodoTask? todo = tasks.Find(todo => todo.Id == id);
         if (todo == null) return null;
         var updatedTask = Update(todo.Finish());
         PersistToFile();
         return updatedTask;
     }
-    
+
     public TodoTask Update(TodoTask task)
     {
-        var index = todos.FindIndex(todo => todo.Id == task.Id);
+        var index = tasks.FindIndex(todo => todo.Id == task.Id);
         TodoTask updatedTodo;
         if (index > -1)
         {
-            todos[index] = task;
+            tasks[index] = task;
             updatedTodo = task;
         }
         else
@@ -58,21 +77,22 @@ public class JsonFileTodo : Todo
 
     public TodoTask? Delete(string id)
     {
-        var toRemove = todos.Find(todo => todo.Id == id);
-        todos.RemoveAll(todo => todo.Id == id);
+        var toRemove = tasks.Find(todo => todo.Id == id);
+        tasks.RemoveAll(todo => todo.Id == id);
         PersistToFile();
         return toRemove;
     }
 
-    private static List<TodoTask> LoadJsonFile(string path)
+    private static TodoData LoadJsonFile(string path)
     {
         using var r = new StreamReader(path);
         string json = r.ReadToEnd();
-        if (string.IsNullOrEmpty(json)) return new();
-        return JsonSerializer.Deserialize<List<TodoTask>>(json,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
-    }
+        if (string.IsNullOrEmpty(json)) return new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), new());
 
+        return JsonSerializer.Deserialize<TodoData>(json,
+                   new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ??
+               new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), new());
+    }
 
 
     private static void CreateFileIfNotExists(string path)
@@ -82,12 +102,14 @@ public class JsonFileTodo : Todo
             return;
         }
 
-        File.WriteAllText(path, "[]");
+        File.WriteAllText(path, "");
     }
 
     private void PersistToFile()
     {
         using var sw = new StreamWriter(path);
-        sw.Write(JsonSerializer.Serialize(todos));
+        sw.Write(JsonSerializer.Serialize(data));
     }
+
+    public record TodoData(string Id, string Name, List<TodoTask> Tasks);
 }
