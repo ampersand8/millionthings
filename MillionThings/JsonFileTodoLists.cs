@@ -20,29 +20,21 @@ public class JsonFileTodoLists : TodoLists
         throw new NotImplementedException();
     }
 
-    public Tuple<string, Todo> Add(Todo todo)
+    public Todo Add(JsonFileTodo todo)
     {
-        throw new NotImplementedException();
-    }
-
-    public string Add(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Tuple<string, Todo> Add(string name, Todo todo)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string Rename(string previousName, string newName)
-    {
-        throw new NotImplementedException();
+        todos.Add(todo);
+        PersistToFile();
+        return todo;
     }
 
     public Todo Get(string name)
     {
-        throw new NotImplementedException();
+        JsonFileTodo? todo = todos.FirstOrDefault(t => t.Name() == name);
+        if (todo is not null) return todo;
+        
+        todo = new JsonFileTodo(null, new JsonFileTodo.TodoData(Guid.NewGuid().ToString(), name, new()));
+        Add(todo);
+        return todo;
     }
 
     public Todo Delete(string name)
@@ -50,10 +42,10 @@ public class JsonFileTodoLists : TodoLists
         throw new NotImplementedException();
     }
 
-    private void PersistToFile()
+    public void PersistToFile()
     {
         using var sw = new StreamWriter(path);
-        sw.Write(JsonSerializer.Serialize(todos));
+        sw.Write(JsonSerializer.Serialize(todos.Select(t => t.data)));
     }
 
     private static List<JsonFileTodo> LoadJsonFile(string path)
@@ -64,7 +56,12 @@ public class JsonFileTodoLists : TodoLists
         List<JsonFileTodo.TodoData> todosData = JsonSerializer.Deserialize<List<JsonFileTodo.TodoData>>(json,
                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ??
                new();
-        return todosData.Select(todoData => new JsonFileTodo(path, todoData)).ToList();
+        foreach (JsonFileTodo.TodoData data in todosData)
+        {
+            JsonFileTodo todo = new JsonFileTodo(null, data);
+            //todo.ValueChanged += this.HandleValueChanged;
+        }
+        return todosData.Select(todoData => new JsonFileTodo(null, todoData)).ToList();
     }
 
     private static void CreateFileIfNotExists(string path)
@@ -75,5 +72,10 @@ public class JsonFileTodoLists : TodoLists
         }
 
         File.WriteAllText(path, "[]");
+    }
+
+    public void HandleValueChanged(Todo todo)
+    {
+        PersistToFile();
     }
 }

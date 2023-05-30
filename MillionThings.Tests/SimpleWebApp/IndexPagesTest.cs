@@ -10,6 +10,6 @@ public class IndexPagesTest
     {
         var sut = new IndexModel(NullLogger<IndexModel>.Instance, Guid.NewGuid() + ".json");
         sut.OnPost("this is a test");
-        Assert.Single(sut.Todos);
+        Assert.Single(sut.Tasks);
     }
 }

@@ -1,0 +1,5 @@
+.main {
+    display: grid;
+    grid-template-columns: minmax(5em, 10em) auto;
+    padding-right: 3em;
+}

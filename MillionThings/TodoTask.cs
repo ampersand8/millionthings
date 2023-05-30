@@ -12,6 +12,7 @@ public class TodoTask
 {
     public TodoTask(string description = "") : this(Guid.NewGuid().ToString(), description, TodoStatus.Open)
     {
+        
     }
 
     [JsonConstructor]

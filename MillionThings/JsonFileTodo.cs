@@ -5,19 +5,31 @@ namespace MillionThings.Core;
 
 public class JsonFileTodo : Todo
 {
-    private TodoData data;
-    private readonly string path;
+    // Define a delegate type for the event handler
+    public delegate void ValueChangedEventHandler(Todo newValue);
+
+    // Define an event based on the delegate
+    public event ValueChangedEventHandler? ValueChanged;
+    public TodoData data { get; set; }
+    private readonly string? path;
 
     private List<TodoTask> tasks => data.Tasks;
 
-    public JsonFileTodo(string path)
+    public JsonFileTodo(string? path)
     {
-        CreateFileIfNotExists(path);
-        data = LoadJsonFile(path);
-        this.path = path;
+        if (path is not null)
+        {
+            CreateFileIfNotExists(path);
+            data = LoadJsonFile(path);
+            this.path = path;
+        }
+        else
+        {
+            data = new TodoData(Guid.NewGuid().ToString(), "default", new());
+        }
     }
 
-    public JsonFileTodo(string path, TodoData data)
+    public JsonFileTodo(string? path, TodoData data)
     {
         this.path = path;
         this.data = data;
@@ -107,8 +119,16 @@ public class JsonFileTodo : Todo
 
     private void PersistToFile()
     {
+        OnValueChanged(this);
+        if (path is null) return;
         using var sw = new StreamWriter(path);
         sw.Write(JsonSerializer.Serialize(data));
+    }
+    
+    protected virtual void OnValueChanged(Todo newValue)
+    {
+        // Check if there are any subscribers, then invoke the event
+        ValueChanged?.Invoke(newValue);
     }
 
     public record TodoData(string Id, string Name, List<TodoTask> Tasks);
