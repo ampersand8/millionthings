@@ -11,16 +11,18 @@ public class IndexModel : PageModel
     private readonly ILogger<IndexModel> logger;
     private readonly Todos todoLists;
     private TodoData todo => todoLists.GetTodo(todoId);
+    public List<TodoData> AllTodos => todoLists.ListTodos();
     private string todoId;
 
     public List<TodoTask> Tasks => todo.Tasks.FindAll(t => t.Status == TodoStatus.Open);
-    public List<TodoTask> DoneTodos => todo.Tasks.FindAll(t => t.Status == TodoStatus.Done);
+    public List<TodoTask> DoneTasks => todo.Tasks.FindAll(t => t.Status == TodoStatus.Done);
+    public string CurrentTodoId => todoId;
 
     public IndexModel(ILogger<IndexModel> logger, string todoFile = "todos.json")
     {
         this.logger = logger;
         todoLists = new JsonFileTodos(todoFile);
-        
+
         if (todoLists.ListTodos().Count == 0)
         {
             var defaultTodo = new TodoData(Guid.NewGuid().ToString(), "default", new());
@@ -35,10 +37,7 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
-        if (Request.Query.TryGetValue("todos", out StringValues inTodoId))
-        {
-            todoId = inTodoId[0] ?? "";
-        }
+        UpdateTodoId();
         Request.Query.TryGetValue("action", out var action);
         Request.Query.TryGetValue("id", out var id);
         if (StringValues.IsNullOrEmpty(action) || StringValues.IsNullOrEmpty(id)) return;
@@ -46,34 +45,47 @@ public class IndexModel : PageModel
         {
             case "finish":
                 Finish(id);
+                Response.Redirect("/?todo=" + todoId);
                 break;
             case "reopen":
                 Reopen(id);
+                Response.Redirect("/?todo=" + todoId);
                 break;
             case "delete":
                 Delete(id);
+                Response.Redirect("/?todo=" + todoId);
                 break;
             default:
                 logger.LogInformation("Unknown action {}", action.ToString());
                 break;
         }
-
-        if (Request.Query.Count > 0) Response.Redirect("/");
     }
 
     public IActionResult OnPost(string description)
     {
-        if (!ModelState.IsValid) return RedirectToPage("Index");
+        UpdateTodoId();
+        if (!ModelState.IsValid) return RedirectToPage("Index?todo=" + todoId);
         logger.LogInformation("I just got a post request! {}", description);
         todoLists.AddTask(todoId, description);
-        return RedirectToPage("Index");
+        return RedirectToPage("Index", new { todo = todoId });
     }
 
     public IActionResult OnPostEdit([FromForm] Dictionary<string,string> model)
     {
+        UpdateTodoId();
         logger.LogInformation("Updating task: {}", model);
-        todoLists.UpdateTask(todoId, new TodoTask(model["id"], model["description"], TodoStatus.Open));
-        return RedirectToPage("Index");
+        todoLists.UpdateTask(model["todoId"], new TodoTask(model["id"], model["description"], TodoStatus.Open));
+        return RedirectToPage("Index", new { todo = model["todoId"] });
+
+    }
+    
+    public IActionResult OnPostAddTodo([FromForm] Dictionary<string,string> model)
+    {
+        UpdateTodoId();
+        logger.LogInformation("Adding todo: {}", model);
+        todoLists.AddTodo(new TodoData(Guid.NewGuid().ToString(), model["name"], new()));
+        return RedirectToPage("Index", new { todo = todoId });
+
     }
 
     private void Finish(string? taskId)
@@ -97,5 +109,13 @@ public class IndexModel : PageModel
         if (taskId == null) return;
         logger.LogInformation("Deleting todo {}", taskId);
         todoLists.DeleteTask(todoId, taskId);
+    }
+
+    private void UpdateTodoId()
+    {
+        if (Request.Query.TryGetValue("todo", out StringValues inTodoId))
+        {
+            todoId = inTodoId[0] ?? todoId;
+        }
     }
 }

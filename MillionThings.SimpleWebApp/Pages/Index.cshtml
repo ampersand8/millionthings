@@ -5,9 +5,10 @@
 }
 
 <script type="text/javascript">
-    function prepareEditTask(id, description, status) {
+    function prepareEditTask(id, description, status, todoId) {
         console.log("prepareEditTask", id, description, status);
         document.getElementById("editTaskId").value = id;
+        document.getElementById("editTaskTodoId").value = todoId;
         document.getElementById("editTaskDescription").value = description;
         document.getElementById("editTaskStatus").value = status;
     }
@@ -15,7 +16,19 @@
 
 <div class="main">
     <div class="sidebar">
-        Testing
+        <ul class="list-unstyled">
+            @foreach (var todo in Model.AllTodos)
+            {
+                <li>
+                    <a href="?todo=@(todo.Id)">@(todo.Name)</a>
+                </li>
+            }
+        </ul>
+        <div class="pointer" data-bs-toggle="modal" data-bs-target="#editTodoModal" style="display: flex">
+            <span class="material-symbols-rounded">add</span>
+            <span>New list</span>
+        </div>
+
     </div>
     <div class="tasks text-center">
         <h1 class="display-4">MillionThings</h1>
@@ -36,30 +49,30 @@
                 @foreach (var task in Model.Tasks)
                 {
                     <li>
-                        <input type="checkbox" onchange="window.location.href = '?action=finish&id=@(task.Id)'" class="form-check-input" aria-label="done"/>
+                        <input type="checkbox" onchange="window.location.href = '?todo=@Model.CurrentTodoId&action=finish&id=@task.Id'" class="form-check-input" aria-label="done"/>
                         <span style="flex-grow: 1">@task.Description</span>
-                        <span class="material-symbols-rounded pointer edit" data-bs-toggle="modal" data-bs-target="#editModal" onclick="prepareEditTask('@task.Id', '@task.Description', '@task.Status')">edit</span>
-                        <span class="material-symbols-rounded delete" onclick="window.location.href = '?action=delete&id=@task.Id'">delete</span>
+                        <span class="material-symbols-rounded pointer edit" data-bs-toggle="modal" data-bs-target="#editModal" onclick="prepareEditTask('@task.Id', '@task.Description', '@task.Status', '@Model.CurrentTodoId')">edit</span>
+                        <span class="material-symbols-rounded delete" onclick="window.location.href = '?todo=@Model.CurrentTodoId&action=delete&id=@task.Id'">delete</span>
                     </li>
                 }
             </ul>
         </div>
         @{
-            if (Model.DoneTodos.Count > 0)
+            if (Model.DoneTasks.Count > 0)
             {
                 <button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#finishedTodos" aria-expanded="false" aria-controls="finishedTodos">
-                    Show @(Model.DoneTodos.Count == 1 ? Model.DoneTodos.Count + " finished task" : Model.DoneTodos.Count + " finished tasks")
+                    Show @(Model.DoneTasks.Count == 1 ? Model.DoneTasks.Count + " finished task" : Model.DoneTasks.Count + " finished tasks")
                 </button>
             }
         }
         <div class="collapse" id="finishedTodos">
             <ul class="todos finished list-unstyled">
-                @foreach (var todo in Model.DoneTodos)
+                @foreach (var task in Model.DoneTasks)
                 {
                     <li>
-                        <input type="checkbox" onchange="window.location.href = '?action=reopen&id=@(todo.Id)'" class="form-check-input" aria-label="done" checked/>
-                        <span style="flex-grow: 1">@todo.Description</span>
-                        <span class="material-symbols-rounded delete" onclick="window.location.href = '?action=delete&id=@todo.Id'">delete</span>
+                        <input type="checkbox" onchange="window.location.href = '?todo=@Model.CurrentTodoId&action=reopen&id=@task.Id'" class="form-check-input" aria-label="done" checked/>
+                        <span style="flex-grow: 1">@task.Description</span>
+                        <span class="material-symbols-rounded delete" onclick="window.location.href = '?todo=@Model.CurrentTodoId&action=delete&id=@task.Id'">delete</span>
                     </li>
                 }
             </ul>
@@ -75,6 +88,7 @@
                         </div>
                         <div class="modal-body">
                             <input id="editTaskId" name="id" type="hidden" required readonly/>
+                            <input id="editTaskTodoId" name="todoId" type="hidden" required readonly/>
                             <input id="editTaskStatus" name="status" type="hidden" required readonly/>
                             <div class="form-floating mb-2">
                                 <input name="description" id="editTaskDescription" type="text" class="form-control" placeholder="Wash the dishes" required/>
@@ -87,6 +101,33 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editTodoModal" tabindex="-1" aria-labelledby="editModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" asp-page-handler="AddTodo" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit todo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input id="editTodoId" name="id" type="hidden" required readonly/>
+                            <div class="form-floating mb-2">
+                                <input name="name" id="editTodoName" class="form-control" placeholder="Shopping" required/>
+                                <label for="editTodoName">Add a todo list</label>
+                                <div class="invalid-tooltip">
+                                    Please give the list a name
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add</button>
                         </div>
                     </form>
                 </div>
