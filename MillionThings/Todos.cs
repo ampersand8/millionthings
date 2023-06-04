@@ -12,6 +12,7 @@ public interface Todos
     TodoData RenameTodo(string todoId, string newName);
     TodoData? DeleteTodo(string todoId);
     TodoData AddTodo(TodoData todo);
+    TodoData AddTodo(string name);
 
     TodoData GetTodo(string todoId);
 

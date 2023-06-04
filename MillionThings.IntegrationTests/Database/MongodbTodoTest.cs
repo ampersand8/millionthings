@@ -17,29 +17,42 @@ public class MongodbTodoTest : IAsyncLifetime
     }
 
     [Fact]
+    public void ShouldSaveAnAddedTodo()
+    {
+        var testString = Guid.NewGuid().ToString();
+        Todos sut = new MongodbTodos(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+
+        sut.AddTodo(testString);
+
+        Assert.Single(sut.ListTodos());
+        Assert.Equal(testString, sut.ListTodos()[0].Name);
+    }
+
+    [Fact]
     public void ShouldSaveAnAddedTask()
     {
         var testString = Guid.NewGuid().ToString();
-        Todo sut = new MongodbTodo(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+        var (sut, todoId) = PrepareTodo();
         
-        sut.Add(testString);
+        var task = sut.AddTask(todoId, testString);
         
-        Assert.Single(sut.List());
-        Assert.Equal(testString, sut.List()[0].Description);
-        Assert.Equal(TodoStatus.Open, sut.List()[0].Status);
+        Assert.Single(sut.ListTasks(todoId));
+        Assert.Equal(testString, sut.ListTasks(todoId)[0].Description);
+        Assert.Equal(TodoStatus.Open, sut.ListTasks(todoId)[0].Status);
+        Assert.Equal(task, sut.ListTasks(todoId)[0]);
     }
 
     [Fact]
     public void ShouldMarkAFinishedTaskAsDone()
     {
         var testString = Guid.NewGuid().ToString();
-        Todo sut = new MongodbTodo(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+        var (sut, todoId) = PrepareTodo();
 
-        sut.Add(testString);
-        var taskToMarkAsFinished = sut.List().Find(t => t.Description == testString);
-        sut.Done(taskToMarkAsFinished.Id);
+        sut.AddTask(todoId, testString);
+        var taskToMarkAsFinished = sut.ListTasks(todoId).Find(t => t.Description == testString);
+        sut.DoneTask(todoId, taskToMarkAsFinished.Id);
 
-        var result = sut.List().Find(t => t.Description == testString);
+        var result = sut.ListTasks(todoId).Find(t => t.Description == testString);
         Assert.Equal(TodoStatus.Done, result.Status);
     }
 
@@ -47,13 +60,19 @@ public class MongodbTodoTest : IAsyncLifetime
     public void ShouldNotListRemovedTasks()
     {
         var testString = Guid.NewGuid().ToString();
-        Todo sut = new MongodbTodo(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+        var (sut, todoId) = PrepareTodo();
 
-        sut.Add(testString);
-        var taskToBeDeleted = sut.List().Find(t => t.Description == testString);
-        sut.Delete(taskToBeDeleted.Id);
+        sut.AddTask(todoId, testString);
+        var taskToBeDeleted = sut.ListTasks(todoId).Find(t => t.Description == testString);
+        sut.DeleteTask(todoId, taskToBeDeleted.Id);
 
-        Assert.Empty(sut.List());
+        Assert.Empty(sut.ListTasks(todoId));
+    }
+
+    private (Todos, string) PrepareTodo()
+    {
+        Todos sut = new MongodbTodos(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+        return (sut, sut.AddTodo(Guid.NewGuid().ToString()).Id);
     }
 
     public Task InitializeAsync()

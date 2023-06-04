@@ -40,6 +40,11 @@ public class JsonFileTodos : Todos
         PersistToFile();
         return todo;
     }
+    
+    public TodoData AddTodo(string name)
+    {
+        return AddTodo(new TodoData(Guid.NewGuid().ToString(), name, new()));
+    }
 
     public TodoData GetTodo(string todoId)
     {
