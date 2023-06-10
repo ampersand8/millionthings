@@ -31,7 +31,8 @@
 
     </div>
     <div class="tasks text-center">
-        <h1 class="display-4">MillionThings</h1>
+        <h1 class="display-4">@Model.CurrentTodo.Name</h1>
+        <span class="material-symbols-rounded delete" onclick="window.location.href = '?handler=todo&todo=@Model.CurrentTodoId&action=delete'">delete</span>
         <form method="post" class="needs-validation" novalidate>
             <div>
                 <div class="form-floating mb-2">

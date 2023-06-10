@@ -10,13 +10,13 @@ public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> logger;
     private readonly Todos todoLists;
-    private TodoData todo => todoLists.GetTodo(todoId);
+    public TodoData CurrentTodo => todoLists.GetTodo(todoId);
     public List<TodoData> AllTodos => todoLists.ListTodos();
     private string todoId;
 
-    public List<TodoTask> Tasks => todo.Tasks.FindAll(t => t.Status == TodoStatus.Open);
-    public List<TodoTask> DoneTasks => todo.Tasks.FindAll(t => t.Status == TodoStatus.Done);
-    public string CurrentTodoId => todoId;
+    public List<TodoTask> Tasks => CurrentTodo.Tasks.FindAll(t => t.Status == TodoStatus.Open);
+    public List<TodoTask> DoneTasks => CurrentTodo.Tasks.FindAll(t => t.Status == TodoStatus.Done);
+    public string CurrentTodoId => CurrentTodo.Id;
 
     public IndexModel(ILogger<IndexModel> logger, string todoFile = "todos.json")
     {
@@ -32,7 +32,17 @@ public class IndexModel : PageModel
         {
             todoId = todoLists.ListTodos()[0].Id;
         }
+    }
 
+    public ActionResult OnGetTodo(string todo, string action)
+    {
+        logger.LogDebug("Talking to OnTodoGet with parameters {} and {}", todo, action);
+        if (action == "delete")
+        {
+            logger.LogDebug("Deleting todo {}", todo);
+            todoLists.DeleteTodo(todo);
+        }
+        return RedirectToPage("Index");
     }
 
     public void OnGet()
@@ -56,7 +66,7 @@ public class IndexModel : PageModel
                 Response.Redirect("/?todo=" + todoId);
                 break;
             default:
-                logger.LogInformation("Unknown action {}", action.ToString());
+                logger.LogDebug("Unknown action {}", action.ToString());
                 break;
         }
     }
@@ -65,7 +75,7 @@ public class IndexModel : PageModel
     {
         UpdateTodoId();
         if (!ModelState.IsValid) return RedirectToPage("Index?todo=" + todoId);
-        logger.LogInformation("I just got a post request! {}", description);
+        logger.LogDebug("I just got a post request! {}", description);
         todoLists.AddTask(todoId, description);
         return RedirectToPage("Index", new { todo = todoId });
     }
@@ -73,7 +83,7 @@ public class IndexModel : PageModel
     public IActionResult OnPostEdit([FromForm] Dictionary<string,string> model)
     {
         UpdateTodoId();
-        logger.LogInformation("Updating task: {}", model);
+        logger.LogDebug("Updating task: {}", model);
         todoLists.UpdateTask(model["todoId"], new TodoTask(model["id"], model["description"], TodoStatus.Open));
         return RedirectToPage("Index", new { todo = model["todoId"] });
 
@@ -82,7 +92,7 @@ public class IndexModel : PageModel
     public IActionResult OnPostAddTodo([FromForm] Dictionary<string,string> model)
     {
         UpdateTodoId();
-        logger.LogInformation("Adding todo: {}", model);
+        logger.LogDebug("Adding todo: {}", model);
         todoLists.AddTodo(new TodoData(Guid.NewGuid().ToString(), model["name"], new()));
         return RedirectToPage("Index", new { todo = todoId });
 
@@ -91,7 +101,7 @@ public class IndexModel : PageModel
     private void Finish(string? taskId)
     {
         if (taskId == null) return;
-        logger.LogInformation("Setting todo {} to done", taskId);
+        logger.LogDebug("Setting todo {} to done", taskId);
         todoLists.DoneTask(todoId, taskId);
     }
 
@@ -100,14 +110,14 @@ public class IndexModel : PageModel
         if (taskId == null) return;
         TodoTask? task = todoLists.ListTasks(todoId).Find(t => t.Id == taskId);
         if (task == null) return;
-        logger.LogInformation("Reopening todo {}", taskId);
+        logger.LogDebug("Reopening todo {}", taskId);
         todoLists.UpdateTask(todoId, new TodoTask { Id = task.Id, Description = task.Description, Status = TodoStatus.Open });
     }
 
     private void Delete(string? taskId)
     {
         if (taskId == null) return;
-        logger.LogInformation("Deleting todo {}", taskId);
+        logger.LogDebug("Deleting todo {}", taskId);
         todoLists.DeleteTask(todoId, taskId);
     }
 

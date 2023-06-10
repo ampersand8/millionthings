@@ -71,7 +71,7 @@ public class JsonFileTodos : Todos
 
     public TodoTask? DeleteTask(string todoId, string taskId)
     {
-        var deleted = data[todoId].Tasks.FirstOrDefault(t => t.Id == taskId);
+        var deleted = data[todoId].Tasks.Find(t => t.Id == taskId);
         if (deleted is null) return null;
         data[todoId].Tasks.Remove(deleted);
         PersistToFile();
@@ -80,7 +80,7 @@ public class JsonFileTodos : Todos
 
     public TodoTask? DoneTask(string todoId, string taskId)
     {
-        var done = data[todoId].Tasks.FirstOrDefault(t => t.Id == taskId);
+        var done = data[todoId].Tasks.Find(t => t.Id == taskId);
         if (done is null) return null;
         UpdateTask(todoId, done.Finish());
         return done;
