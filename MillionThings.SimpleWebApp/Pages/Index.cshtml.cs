@@ -28,13 +28,14 @@ public class IndexModel : PageModel
             var defaultTodo = new TodoData(Guid.NewGuid().ToString(), "default", new());
             todoId = defaultTodo.Id;
             todoLists.AddTodo(defaultTodo);
-        } else
+        }
+        else
         {
             todoId = todoLists.ListTodos()[0].Id;
         }
     }
 
-    public ActionResult OnGetTodo(string todo, string action)
+    public ActionResult OnGetTodo(string todo, string action, string? newName)
     {
         logger.LogDebug("Talking to OnTodoGet with parameters {} and {}", todo, action);
         if (action == "delete")
@@ -42,6 +43,12 @@ public class IndexModel : PageModel
             logger.LogDebug("Deleting todo {}", todo);
             todoLists.DeleteTodo(todo);
         }
+        else if (action == "edit" && newName is not null)
+        {
+            todoLists.RenameTodo(todo, newName);
+            return RedirectToPage("Index?todo=" + todo);
+        }
+
         return RedirectToPage("Index");
     }
 
@@ -80,22 +87,46 @@ public class IndexModel : PageModel
         return RedirectToPage("Index", new { todo = todoId });
     }
 
-    public IActionResult OnPostEdit([FromForm] Dictionary<string,string> model)
+    public IActionResult OnPostEdit([FromForm] Dictionary<string, string> model)
     {
         UpdateTodoId();
         logger.LogDebug("Updating task: {}", model);
         todoLists.UpdateTask(model["todoId"], new TodoTask(model["id"], model["description"], TodoStatus.Open));
         return RedirectToPage("Index", new { todo = model["todoId"] });
-
     }
-    
-    public IActionResult OnPostAddTodo([FromForm] Dictionary<string,string> model)
-    {
-        UpdateTodoId();
-        logger.LogDebug("Adding todo: {}", model);
-        todoLists.AddTodo(new TodoData(Guid.NewGuid().ToString(), model["name"], new()));
-        return RedirectToPage("Index", new { todo = todoId });
 
+    public IActionResult OnPostEditTodo([FromForm] Dictionary<string, string> model)
+    {
+        logger.LogDebug("OnPostEditTodo: {}", model);
+        UpdateTodoId();
+        if (model.ContainsKey("id") && !string.IsNullOrEmpty(model["id"]))
+        {
+            logger.LogDebug("Renaming todo {} to {}", model["id"], model["name"] ?? "");
+            todoLists.RenameTodo(model["id"], model["name"]);
+        }
+
+        return RedirectToPage("Index", new { todo = todoId });
+    }
+
+    public IActionResult OnPostAddTodo([FromForm] Dictionary<string, string> model)
+    {
+        logger.LogDebug("OnPostAddTodo: {}", model);
+        UpdateTodoId();
+        if (model.ContainsKey("name") && !string.IsNullOrEmpty(model["name"]))
+        {
+            logger.LogDebug("Adding todo: {}", model);
+            var newTodo = new TodoData(Guid.NewGuid().ToString(), model["name"], new());
+            todoLists.AddTodo(newTodo);
+            return RedirectToPage("Index", new
+            {
+                todo = newTodo.Id
+            });
+        }
+
+        return RedirectToPage("Index", new
+        {
+            todo = todoId
+        });
     }
 
     private void Finish(string? taskId)
@@ -111,7 +142,8 @@ public class IndexModel : PageModel
         TodoTask? task = todoLists.ListTasks(todoId).Find(t => t.Id == taskId);
         if (task == null) return;
         logger.LogDebug("Reopening todo {}", taskId);
-        todoLists.UpdateTask(todoId, new TodoTask { Id = task.Id, Description = task.Description, Status = TodoStatus.Open });
+        todoLists.UpdateTask(todoId,
+            new TodoTask { Id = task.Id, Description = task.Description, Status = TodoStatus.Open });
     }
 
     private void Delete(string? taskId)
