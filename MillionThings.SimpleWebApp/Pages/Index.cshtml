@@ -1,4 +1,5 @@
 ﻿@page
+@using MillionThings.Core
 @model IndexModel
 @{
     ViewData["Title"] = null;
@@ -20,7 +21,8 @@
             @foreach (var todo in Model.AllTodos)
             {
                 <li>
-                    <a href="?todo=@(todo.Id)">@(todo.Name)</a>
+                    <a href="?todo=@(todo.Id)">@todo.Name</a>
+                    <span class="badge bg-secondary">@todo.Tasks.FindAll(t => t.Status == TodoStatus.Open).Count</span>
                 </li>
             }
         </ul>
