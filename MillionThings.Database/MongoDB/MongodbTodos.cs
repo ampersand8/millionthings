@@ -1,18 +1,22 @@
 using System.Reflection.Metadata;
+using Microsoft.Extensions.Logging;
 using MillionThings.Core;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace MillionThings.Database;
+namespace MillionThings.Database.MongoDB;
 
 public class MongodbTodos : Todos
 {
     private readonly IMongoCollection<TodoData> todos;
+    private readonly ILogger<MongodbTodos> _logger;
 
 
-    public MongodbTodos(string connectionString, string database)
+    public MongodbTodos(ILogger<MongodbTodos> logger, string connectionString, string database)
     {
+        _logger = logger;
+        _logger.LogInformation("Got connectionString {} and database {}", connectionString, database);
         todos = new MongoClient(connectionString).GetDatabase(database).GetCollection<TodoData>("todos");
     }
 
@@ -45,19 +49,24 @@ public class MongodbTodos : Todos
         return AddTodo(new TodoData(Guid.NewGuid().ToString(), name, new()));
     }
 
-    public TodoData GetTodo(string todoId)
+    public TodoData? GetTodo(string todoId)
     {
         return todos.Find(t => t.Id == todoId).First();
     }
 
     public List<TodoData> ListTodos()
     {
-        return todos.Find(_ => true).ToList();
+        return todos.Find(_ => true).ToList() ?? new List<TodoData>();
     }
 
     public List<TodoTask> ListTasks(string todoId)
     {
-        return GetTodo(todoId).Tasks;
+        return GetTodo(todoId)?.Tasks ?? new List<TodoTask>();
+    }
+
+    public TodoTask? GetTask(string todoId, string taskId)
+    {
+        return GetTodo(todoId).Tasks.Find(task => task.Id == taskId);
     }
 
     public TodoTask AddTask(string todoId, string description)

@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.8" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
         <PackageReference Include="Testcontainers.MongoDb" Version="3.2.0" />
         <PackageReference Include="xunit" Version="2.4.2" />
@@ -25,6 +26,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MillionThings.Database\MillionThings.Database.csproj" />
+      <ProjectReference Include="..\WebAPI\MillionThings.WebAPI.csproj" />
     </ItemGroup>
 
 </Project>

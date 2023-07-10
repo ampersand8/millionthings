@@ -1,12 +1,17 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using MillionThings.Core;
 using MillionThings.Database;
+using MillionThings.Database.MongoDB;
 using Testcontainers.MongoDb;
 
-namespace MillionThings.IntegrationTests.Database;
+namespace MillionThings.IntegrationTests.Database.MongoDB;
 
 public class MongodbTodoTest : IAsyncLifetime
 {
     private readonly MongoDbContainer mongoContainer = new MongoDbBuilder().Build();
+    private readonly ILogger<MongodbTodos> _logger = NullLogger<MongodbTodos>.Instance;
+
 
     [Fact]
     public void ShouldBeEmptyAtStart()
@@ -20,7 +25,7 @@ public class MongodbTodoTest : IAsyncLifetime
     public void ShouldSaveAnAddedTodo()
     {
         var testString = Guid.NewGuid().ToString();
-        Todos sut = new MongodbTodos(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+        Todos sut = new MongodbTodos(_logger, mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
 
         sut.AddTodo(testString);
 
@@ -71,7 +76,7 @@ public class MongodbTodoTest : IAsyncLifetime
 
     private (Todos, string) PrepareTodo()
     {
-        Todos sut = new MongodbTodos(mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
+        Todos sut = new MongodbTodos(_logger, mongoContainer.GetConnectionString(), Guid.NewGuid().ToString());
         return (sut, sut.AddTodo(Guid.NewGuid().ToString()).Id);
     }
 

@@ -1,57 +1,80 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using MillionThings;
 using MillionThings.Core;
+using MillionThings.Database.MongoDB;
+using MillionThings.WebAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MillionThings.WebAPI.Controllers;
 
-[Route("api/todos")]
+[Route("api/v1/todos")]
 [ApiController]
 public class MillionThingsController : ControllerBase
 {
-    private readonly Dictionary<string, Todo> todoLists = new Dictionary<string, Todo>();
-    public MillionThingsController()
+    private readonly Todos todos;
+    private readonly ILogger<MillionThingsController> _logger;
+
+    public MillionThingsController(ILoggerFactory loggerFactory, IOptions<MillionThingsDatabaseSettings> settings)
     {
+        _logger = loggerFactory.CreateLogger<MillionThingsController>();
+        todos = new MongodbTodos(loggerFactory.CreateLogger<MongodbTodos>(), settings.Value.ConnectionString,
+            settings.Value.DatabaseName);
     }
 
-    [HttpGet("{list}")]
-    public IEnumerable<TodoTask> Get(string list)
+    [HttpGet]
+    public IEnumerable<TodoData> GetTodoLists()
     {
-        return GetTodo(list).List();
+        _logger.LogInformation("GetTodoLists");
+        return todos.ListTodos();
     }
 
-    [HttpGet("{list}/{id}")]
-    public TodoTask? Get(string list, string id)
+    [HttpGet("{listId}")]
+    public TodoData? GetTodoList(string listId)
     {
-
-        return GetTodo(list).List().Find(t => t.Id.Equals(id));
+        return todos.GetTodo(listId);
     }
 
-    [HttpPost("{list}")]
-    public TodoTask Post(string list, [FromBody] string description)
+    [HttpPost]
+    public TodoData CreateTodoList([FromBody] string name)
     {
-        return GetTodo(list).Add(description);
+        return todos.AddTodo(name);
     }
 
-    [HttpPut("{list}/{id}")]
-    public TodoTask Put(string list, string id, [FromBody] string value)
+    [HttpDelete("{listId}")]
+    public TodoData? DeleteTodoList(string listId)
     {
-        return GetTodo(list).Update(new TodoTask { Id = id, Description = value });
+        return todos.DeleteTodo(listId);
     }
 
-    [HttpPost("{list}/{id}/done")]
-    public TodoTask? Done(string list, string id)
+    [HttpGet("{listId}/tasks")]
+    public IEnumerable<TodoTask> ListTasks(string list)
     {
-        return GetTodo(list).Done(id);
+        return todos.ListTasks(list);
     }
 
-    private Todo GetTodo(string todoList)
+    [HttpGet("{listId}/tasks/{taskId}")]
+    public TodoTask? GetTask(string listId, string taskId)
     {
-        todoLists.TryGetValue(todoList, out Todo? todo);
-        if (todo is not null) return todo;
-        todo = new JsonFileTodo($"{todoList}.json");
-        todoLists.Add(todoList, todo);
-        return todo;
+        return todos.GetTask(listId, taskId);
+    }
+
+    [HttpPost("{listId}/tasks")]
+    public TodoTask CreateTask(string listId, [FromBody] string description)
+    {
+        return todos.AddTask(listId, description);
+    }
+
+    [HttpPut("{listId}/tasks/{taskId}")]
+    public TodoTask UpdateTask(string listId, string taskId, [FromBody] string value)
+    {
+        return todos.UpdateTask(listId, new TodoTask { Id = taskId, Description = value });
+    }
+
+    [HttpPost("{listId}/tasks/{taskId}/done")]
+    public TodoTask? FinishTask(string listId, string taskId)
+    {
+        return todos.DoneTask(listId, taskId);
     }
 }

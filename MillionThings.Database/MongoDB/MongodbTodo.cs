@@ -1,7 +1,7 @@
 ﻿using MillionThings.Core;
 using MongoDB.Driver;
 
-namespace MillionThings.Database;
+namespace MillionThings.Database.MongoDB;
 
 public class MongodbTodo : Todo
 {

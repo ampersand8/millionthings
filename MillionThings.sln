@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.Database", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillionThings.IntegrationTests", "MillionThings.IntegrationTests\MillionThings.IntegrationTests.csproj", "{5F7323A2-E006-410E-934C-9C2B2FAB5167}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp", "BlazorApp\BlazorApp.csproj", "{7B904817-6967-4F02-A647-FDE39AF7B8E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F7323A2-E006-410E-934C-9C2B2FAB5167}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B904817-6967-4F02-A647-FDE39AF7B8E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B904817-6967-4F02-A647-FDE39AF7B8E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B904817-6967-4F02-A647-FDE39AF7B8E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B904817-6967-4F02-A647-FDE39AF7B8E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

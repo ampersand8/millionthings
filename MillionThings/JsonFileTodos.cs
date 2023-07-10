@@ -61,6 +61,11 @@ public class JsonFileTodos : Todos
         return data[todoId].Tasks;
     }
 
+    public TodoTask? GetTask(string todoId, string taskId)
+    {
+        return data[todoId].Tasks.Find(t => t.Id == taskId);
+    }
+
     public TodoTask AddTask(string todoId, string description)
     {
         var added = new TodoTask(description);

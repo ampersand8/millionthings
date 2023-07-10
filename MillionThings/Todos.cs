@@ -14,11 +14,15 @@ public interface Todos
     TodoData AddTodo(TodoData todo);
     TodoData AddTodo(string name);
 
-    TodoData GetTodo(string todoId);
+    TodoData? GetTodo(string todoId);
 
-    List<TodoData> ListTodos();
-    
+    List<TodoData> ListTodos()
+    {
+        throw new NotImplementedException();
+    }
+
     List<TodoTask> ListTasks(string todoId);
+    TodoTask? GetTask(string todoId, string taskId);
     TodoTask AddTask(string todoId, string description);
     /// <summary>
     /// Removes a task

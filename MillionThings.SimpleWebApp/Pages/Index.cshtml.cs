@@ -10,7 +10,7 @@ public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> logger;
     private readonly Todos todoLists;
-    public TodoData CurrentTodo => todoLists.GetTodo(todoId);
+    public TodoData CurrentTodo => todoLists.GetTodo(todoId)!;
     public List<TodoData> AllTodos => todoLists.ListTodos();
     private string todoId;
 
