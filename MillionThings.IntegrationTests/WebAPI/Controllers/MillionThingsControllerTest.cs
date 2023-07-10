@@ -1,8 +1,10 @@
 using System.Net;
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MillionThings.Core;
 using MillionThings.WebAPI.Controllers;
 using MillionThings.WebAPI.Models;
 using Testcontainers.MongoDb;
@@ -23,17 +25,49 @@ public class MillionThingsControllerTest : IClassFixture<ApiWebApplicationFactor
     [Fact]
     private async Task ShouldReturnEmptyListWhenListingFirstTime()
     {
-        //await using var application = new WebApplicationFactory<MillionThingsController>();
         using var client = apiFactory.CreateClient();
  
         var response = await client.GetAsync("/api/v1/todos");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("[]", response.Content.ReadAsStringAsync().Result);
-        // var sut = new MillionThingsController(SetupMongoDbSettings());
+    }
+    
+    [Fact]
+    private async Task ShouldReturnSingleTodoListWhenOneIsCreated()
+    {
+        using var client = apiFactory.CreateClient();
         
-        //var result = sut.GetTodoLists();
-        
-        //Assert.Empty(result);
+        var todoListName = Guid.NewGuid().ToString();
+ 
+        await client.PostAsync("/api/v1/todos", JsonContent.Create(todoListName));
+ 
+        var listResponse = await client.GetAsync("/api/v1/todos");
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+        List<TodoData> listResult = await listResponse.Content.ReadFromJsonAsync<List<TodoData>>();
+        Assert.Single(listResult);
+        Assert.Equal(todoListName, listResult[0].Name);
+    }
+
+    [Fact]
+    private async Task ShouldCreateTodoList()
+    {
+        using var client = apiFactory.CreateClient();
+        var todoListName = Guid.NewGuid().ToString();
+ 
+        var response = await client.PostAsync("/api/v1/todos", JsonContent.Create(todoListName));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        TodoData result = await response.Content.ReadFromJsonAsync<TodoData>();
+        Assert.Equal(todoListName, result.Name);
+    }
+    
+    [Fact]
+    private async Task ShouldReturnNotFoundWhenRequestingNonExistingTodoList()
+    {
+        using var client = apiFactory.CreateClient();
+        var nonExistingTodoListId = Guid.NewGuid().ToString();
+ 
+        var response = await client.GetAsync($"/api/v1/todos/{nonExistingTodoListId}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 /*
     [Fact]

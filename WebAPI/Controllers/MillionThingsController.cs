@@ -31,9 +31,15 @@ public class MillionThingsController : ControllerBase
     }
 
     [HttpGet("{listId}")]
-    public TodoData? GetTodoList(string listId)
+    public ActionResult<TodoData> GetTodoList(string listId)
     {
-        return todos.GetTodo(listId);
+        TodoData? result = todos.GetTodo(listId);
+        if (result == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
     }
 
     [HttpPost]

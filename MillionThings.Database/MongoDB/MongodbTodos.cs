@@ -51,7 +51,7 @@ public class MongodbTodos : Todos
 
     public TodoData? GetTodo(string todoId)
     {
-        return todos.Find(t => t.Id == todoId).First();
+        return todos.Find(t => t.Id == todoId).FirstOrDefault();
     }
 
     public List<TodoData> ListTodos()
