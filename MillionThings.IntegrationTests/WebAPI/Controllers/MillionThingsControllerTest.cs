@@ -69,6 +69,30 @@ public class MillionThingsControllerTest : IClassFixture<ApiWebApplicationFactor
         var response = await client.GetAsync($"/api/v1/todos/{nonExistingTodoListId}");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Fact]
+    private async Task ShouldRemoveTodoListFromListingWhenDeleting()
+    {
+        using var client = apiFactory.CreateClient();
+        var todoListName = Guid.NewGuid().ToString();
+        
+        var firstListResponse = await client.GetAsync("/api/v1/todos");
+        Assert.Equal(HttpStatusCode.OK, firstListResponse.StatusCode);
+        var firstListCount = (await firstListResponse.Content.ReadFromJsonAsync<List<TodoData>>()).Count;
+ 
+        var createResponse = await client.PostAsync("/api/v1/todos", JsonContent.Create(todoListName));
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        TodoData createResult = await createResponse.Content.ReadFromJsonAsync<TodoData>();
+
+        var deleteResponse = await client.DeleteAsync($"/api/v1/todos/{createResult.Id}");
+        
+        
+        var listResponse = await client.GetAsync("/api/v1/todos");
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+        List<TodoData> listResult = await listResponse.Content.ReadFromJsonAsync<List<TodoData>>();
+        Assert.Equal(firstListCount, listResult.Count);
+        Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
+    }
 /*
     [Fact]
     private void ShouldCreateTodoList()
