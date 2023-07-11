@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using MillionThings;
 using MillionThings.Core;
 using MillionThings.Database.MongoDB;
 using MillionThings.WebAPI.Models;
@@ -49,9 +48,15 @@ public class MillionThingsController : ControllerBase
     }
 
     [HttpDelete("{listId}")]
-    public TodoData? DeleteTodoList(string listId)
+    public ActionResult<TodoData> DeleteTodoList(string listId)
     {
-        return todos.DeleteTodo(listId);
+        var deleted =  todos.DeleteTodo(listId);
+        if (deleted is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(deleted);
     }
 
     [HttpGet("{listId}/tasks")]

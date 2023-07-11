@@ -8,7 +8,7 @@ using MillionThings.WebAPI.Controllers;
 using MillionThings.WebAPI.Models;
 using Testcontainers.MongoDb;
 
-namespace MillionThings.IntegrationTests.WebAPI.Controllers;
+namespace MillionThings.IntegrationTests.WebAPI;
 
 public class ApiWebApplicationFactory : WebApplicationFactory<MillionThingsController>, IAsyncLifetime
 {
