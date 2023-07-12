@@ -59,7 +59,6 @@ public class RestApiTodoTaskTests : IClassFixture<ApiWebApplicationFactory>
         var deleteResponse = await client.DeleteAsync($"/api/v1/todos/{todoList.Id}/tasks/{createResult.Id}");
         TodoTask deleteResult = await deleteResponse.Content.ReadFromJsonAsync<TodoTask>();
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
-
         Assert.Equal(taskDescription, deleteResult.Description);
     }
     
@@ -72,6 +71,25 @@ public class RestApiTodoTaskTests : IClassFixture<ApiWebApplicationFactory>
 
         var deleteResponse = await client.DeleteAsync($"/api/v1/todos/{todoList.Id}/tasks/{nonExistingTask}");
         Assert.Equal(HttpStatusCode.NotFound, deleteResponse.StatusCode);
+    }
+    
+    [Fact]
+    private async Task ShouldMarkTaskAsDone()
+    {
+        var taskDescription = Guid.NewGuid().ToString();
+        using var client = apiFactory.CreateClient();
+        await GetTodoList();
+        var createResponse = await client.PostAsync($"/api/v1/todos/{todoList.Id}/tasks", JsonContent.Create(taskDescription));
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        TodoTask createResult = await createResponse.Content.ReadFromJsonAsync<TodoTask>();
+        
+        var markAsDoneResponse = await client.PostAsync($"/api/v1/todos/{todoList.Id}/tasks/{createResult.Id}/done", null);
+        Assert.Equal(HttpStatusCode.OK, markAsDoneResponse.StatusCode);
+        
+        var getResponse = await client.GetAsync($"/api/v1/todos/{todoList.Id}/tasks/{createResult.Id}");
+        var getResult = await getResponse.Content.ReadFromJsonAsync<TodoTask>();
+        
+        Assert.Equal(TodoStatus.Done, getResult.Status);
     }
 
     private async Task<TodoData> GetTodoList()
