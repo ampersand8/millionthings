@@ -29,7 +29,25 @@ public class RestApiTodoListTests : IClassFixture<ApiWebApplicationFactory>
     }
     
     [Fact]
-    private async Task ShouldReturnTodoListWhenOneIsCreated()
+    private async Task ShouldReturnTodoListInGetWhenOneIsCreated()
+    {
+        using var client = apiFactory.CreateClient();
+        
+        var todoListName = Guid.NewGuid().ToString();
+        
+ 
+        var createResponse = await client.PostAsync("/api/v1/todos", JsonContent.Create(todoListName));
+        var createResult = await createResponse.Content.ReadFromJsonAsync<TodoData>();
+
+        var getResponse = await client.GetAsync($"/api/v1/todos/{createResult.Id}");
+        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+        TodoData getResult = await getResponse.Content.ReadFromJsonAsync<TodoData>();
+
+        Assert.Equal(todoListName, getResult.Name);
+    }
+    
+    [Fact]
+    private async Task ShouldReturnTodoListInListingWhenOneIsCreated()
     {
         using var client = apiFactory.CreateClient();
         

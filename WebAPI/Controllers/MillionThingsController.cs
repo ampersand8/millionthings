@@ -60,9 +60,9 @@ public class MillionThingsController : ControllerBase
     }
 
     [HttpGet("{listId}/tasks")]
-    public IEnumerable<TodoTask> ListTasks(string list)
+    public IEnumerable<TodoTask> ListTasks(string listId)
     {
-        return todos.ListTasks(list);
+        return todos.ListTasks(listId);
     }
 
     [HttpGet("{listId}/tasks/{taskId}")]
