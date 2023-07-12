@@ -19,21 +19,59 @@ public class RestApiTodoTaskTests : IClassFixture<ApiWebApplicationFactory>
     }
 
     [Fact]
-    private async Task ShouldReturnEmptyListWhenListingFirstTime()
+    private async Task ShouldReturnEmptyTaskListWhenListingAfterCreationOfTodoList()
     {
         using var client = apiFactory.CreateClient();
-        
-        var todoListName = Guid.NewGuid().ToString();
-        
- 
-        var createResponse = await client.PostAsync("/api/v1/todos", JsonContent.Create(todoListName));
-        var createResult = await createResponse.Content.ReadFromJsonAsync<TodoData>();
+        await CleanupTaskList();
 
-        var getResponse = await client.GetAsync($"/api/v1/todos/{createResult.Id}/tasks");
+        var getResponse = await client.GetAsync($"/api/v1/todos/{todoList.Id}/tasks");
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         List<TodoTask> getResult = await getResponse.Content.ReadFromJsonAsync<List<TodoTask>>();
 
         Assert.Empty(getResult);
+    }
+    
+    [Fact]
+    private async Task ShouldCreateTask()
+    {
+        var taskDescription = Guid.NewGuid().ToString();
+        using var client = apiFactory.CreateClient();
+        await CleanupTaskList();
+
+        var createResponse = await client.PostAsync($"/api/v1/todos/{todoList.Id}/tasks", JsonContent.Create(taskDescription));
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        TodoTask createResult = await createResponse.Content.ReadFromJsonAsync<TodoTask>();
+
+        Assert.Equal(taskDescription, createResult.Description);
+    }
+
+    [Fact]
+    private async Task ShouldDeleteTask()
+    {
+        var taskDescription = Guid.NewGuid().ToString();
+        using var client = apiFactory.CreateClient();
+        await CleanupTaskList();
+
+        var createResponse = await client.PostAsync($"/api/v1/todos/{todoList.Id}/tasks", JsonContent.Create(taskDescription));
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        TodoTask createResult = await createResponse.Content.ReadFromJsonAsync<TodoTask>();
+        
+        var deleteResponse = await client.DeleteAsync($"/api/v1/todos/{todoList.Id}/tasks/{createResult.Id}");
+        TodoTask deleteResult = await deleteResponse.Content.ReadFromJsonAsync<TodoTask>();
+        Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
+
+        Assert.Equal(taskDescription, deleteResult.Description);
+    }
+    
+    [Fact]
+    private async Task ShouldReturnNotFoundWhenDeletingNonExistingTask()
+    {
+        var nonExistingTask = Guid.NewGuid().ToString();
+        using var client = apiFactory.CreateClient();
+        await CleanupTaskList();
+
+        var deleteResponse = await client.DeleteAsync($"/api/v1/todos/{todoList.Id}/tasks/{nonExistingTask}");
+        Assert.Equal(HttpStatusCode.NotFound, deleteResponse.StatusCode);
     }
 
     private async Task<TodoData> GetTodoList()

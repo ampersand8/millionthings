@@ -76,6 +76,18 @@ public class MillionThingsController : ControllerBase
     {
         return todos.AddTask(listId, description);
     }
+    
+    [HttpDelete("{listId}/tasks/{taskId}")]
+    public ActionResult<TodoTask> DeleteTask(string listId, string taskId)
+    {
+        var deleted =  todos.DeleteTask(listId, taskId);
+        if (deleted is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(deleted);
+    }
 
     [HttpPut("{listId}/tasks/{taskId}")]
     public TodoTask UpdateTask(string listId, string taskId, [FromBody] string value)
